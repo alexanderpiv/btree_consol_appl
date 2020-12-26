@@ -1,0 +1,4 @@
+1) Create an account on github (an online storage space for Git based repositories)
+2) Create a new visual studio project (select console application so that it sets up the startup file automatically - need to it to compile).
+3) I believe when i right clicked on "Solution 'btree_consol_app' (the name i gave thi sproject) in the SOlutions explorer, i had the option to add this thing to GitHub.
+4) I believe now the revision control is working.
