@@ -6,3 +6,4 @@
 But that's not all. Laos once in SOlution (not folder view), need to click on this filter icon and click it/arrow to get all files from solution.
 6) TO submit changes - need to Click on Git -> Commit. Then on Git -> Push.
 7) TO view revision history on GitHub, click on file and then Blame and hten can get history and more.
+8) In visual studoo Click Git -> Pull to get changes done by other - me changing on github.com for isntance.
