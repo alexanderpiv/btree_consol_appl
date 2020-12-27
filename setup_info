@@ -4,3 +4,4 @@
 4) I believe now the revision control is working.
 5) In solution Explorer - need to click Switch Views buttons once to toggle folder, solution views. Once in SOlution view , only there can compile/add source files etc. 
 But that's not all. Laos once in SOlution (not folder view), need to click on this filter icon and click it/arrow to get all files from solution.
+6) TO submit changes - need to Click on Git -> Commit. Then on Git -> Push.
