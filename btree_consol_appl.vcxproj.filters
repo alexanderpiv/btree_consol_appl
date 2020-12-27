@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="btree_consol_appl.cpp">
+    <ClCompile Include="btree_implemnt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
