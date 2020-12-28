@@ -60,9 +60,11 @@ struct addElem_returnVal {
 
 //TODO!!!!!!!!!!!!!!!!!!!!!!!!:
 //1) Add code to work with even order number; currently works only with odd
-//2) Remove pass by reference added and midKey and return them instead together with btree* - I guess create a struct.
+//2) DONE: Remove pass by reference added and midKey and return them instead together with btree* - I guess create a struct.
 //3) I assume eed to delete "new" objects.
 //4) Add remove element funcitonality
+//5) IMpelment preemptive insertion
+//6) Do not add element if already exists
 
 addElem_returnVal add_elem(int key, btree*& tree_root, btree*& tree_root_parent) { //second btree is parent root
     int i = 0;
@@ -164,7 +166,24 @@ int main()
     btree btree_inst;
     btree btree_inst_actual(5, 3); //order 3 means when reaching 3 elemnts in a tree, need to split, i.e. should have max of 2 elements per tree.
     btree* btree_inst2 = &btree_inst_actual; //need this since otherwise passing &btree_inst_actual instead won't work with add_elem func arg of btree*& val, i.e. cannot pass by reference the adress of the class..
-    add_elem(2, btree_inst2, btree_inst2);
+    srand(time(NULL));
+    int elem_num = 20;
+    int * elem_arr = new int [elem_num];
+    for (int iter = 0; iter < elem_num; iter++) {
+        int elem = rand() % 30;
+        printf("Adding element %d\n", elem);
+        add_elem(elem, btree_inst2, btree_inst2);
+        print_tree(btree_inst2);
+        printf("DONE Iter %d\n", iter);
+        elem_arr[iter] = elem;
+    }
+    printf("Added the following list of elements:\n");
+    for (int elm_i = 0; elm_i < elem_num; elm_i++) {
+        printf("%d ", elem_arr[elm_i]);
+    }
+    printf("\nDone\n");
+
+    /*add_elem(2, btree_inst2, btree_inst2);
     print_tree(btree_inst2);
     printf("DONE Iter 1\n");
     add_elem(3, btree_inst2, btree_inst2);
@@ -223,7 +242,7 @@ int main()
     printf("DONE Iter 18\n");
     add_elem(13, btree_inst2, btree_inst2);
     print_tree(btree_inst2);
-    printf("DONE Iter 19\n");
+    printf("DONE Iter 19\n");*/
     return 0;
 }
 
