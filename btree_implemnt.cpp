@@ -64,9 +64,9 @@ struct addElem_returnVal {
 //3) I assume eed to delete "new" objects.
 //4) Add remove element funcitonality
 //5) IMpelment preemptive insertion
-//6) Do not add element if already exists
+//6) DONE: Do not add element if already exists
 
-addElem_returnVal add_elem(int key, btree*& tree_root, btree*& tree_root_parent) { //second btree is parent root
+addElem_returnVal add_elem(int key, btree*& tree_root, btree*& tree_root_parent, bool addAlways) { //second btree is parent root
     int i = 0;
     int extraKey = tree_root->order - 2;
 
@@ -76,16 +76,31 @@ addElem_returnVal add_elem(int key, btree*& tree_root, btree*& tree_root_parent)
     treeMore.added = false;
     treeMore.midKey = -5;
 
-    while (tree_root->keys[i] != -1 && key >= tree_root->keys[i]) {
-        i++;
+    if (addAlways) {
+        //USERSET (sort of): assuming key==parent, if want key in left substree, have: key > tree_root->keys[i], else use: key >= tree_root->keys[i]
+        while (tree_root->keys[i] != -1 && key > tree_root->keys[i]) {
+            i++;
+        }
     }
+    else {
+        while (tree_root->keys[i] != -1 && key > tree_root->keys[i]) {
+            i++;
+        }
+        //if key exists already, no need to add it again
+        if (key == tree_root->keys[i]) {
+            treeMore.added = true;
+            printf("Key %d already exists so not adding it again\n", key);
+            return treeMore;
+        }
+    }
+
     if (tree_root->keys[i] == -1) {
         if (tree_root->tree_ptr[i] != nullptr) { //going right subtree
-            treeMore = add_elem(key, tree_root->tree_ptr[i], tree_root);
+            treeMore = add_elem(key, tree_root->tree_ptr[i], tree_root, addAlways);
         }
     }
     else if (tree_root->tree_ptr[i] != nullptr) { //going left subtree
-        treeMore = add_elem(key, tree_root->tree_ptr[i], tree_root);
+        treeMore = add_elem(key, tree_root->tree_ptr[i], tree_root, addAlways);
     }
 
     //if tree has space for more keys, add them - when tree is empty, will do this and fill first level this way
@@ -162,17 +177,42 @@ addElem_returnVal add_elem(int key, btree*& tree_root, btree*& tree_root_parent)
 
 int main()
 {
+    //Current implementation and settings are as follows:
+    //1) Adding elements even if exist (bool addEvenIfExists = true;) - verified correctness of converse scenario by eye check
+    //2) Generating non unique elements (bool unique = false;) - verified correctness of converse by having program hang when had elem_range<elem_num and then couldn't generate more unique values.
+    //3) If new element == parent, adding it in left substree if there is space there (given above settings and given we have at least 2 levels already populated) (key > tree_root->keys[i])
+
     cout << "Hello World\n";
     btree btree_inst;
-    btree btree_inst_actual(5, 3); //order 3 means when reaching 3 elemnts in a tree, need to split, i.e. should have max of 2 elements per tree.
+    btree btree_inst_actual(3, 3); //USERSET //order 3 means when reaching 3 elemnts in a tree, need to split, i.e. should have max of 2 elements per tree.
     btree* btree_inst2 = &btree_inst_actual; //need this since otherwise passing &btree_inst_actual instead won't work with add_elem func arg of btree*& val, i.e. cannot pass by reference the adress of the class..
-    srand(time(NULL));
-    int elem_num = 20;
+    time_t seed = time(NULL);
+    srand(seed);
+    printf("Starting with seed = %lld\n", seed);
+    bool addEvenIfExists = true; //USERSET
+    int elem_num = 40; //USERSET
     int * elem_arr = new int [elem_num];
+    int elem_range = 50; //USERSET
+    bool unique = false; //USERSET
     for (int iter = 0; iter < elem_num; iter++) {
-        int elem = rand() % 30;
+        int elem = rand() % elem_range; 
+        if (unique) {
+            bool elem_unique = false; 
+            while (!elem_unique) {
+                int search;
+                for (search = 0; search < iter; search++) {
+                    if (elem == elem_arr[search]) {
+                        elem = rand() % elem_range;
+                        break;
+                    }
+                }
+                if (search == iter) {
+                    elem_unique = true;
+                }
+            }
+        }
         printf("Adding element %d\n", elem);
-        add_elem(elem, btree_inst2, btree_inst2);
+        add_elem(elem, btree_inst2, btree_inst2, addEvenIfExists);
         print_tree(btree_inst2);
         printf("DONE Iter %d\n", iter);
         elem_arr[iter] = elem;
