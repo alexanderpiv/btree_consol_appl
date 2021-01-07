@@ -438,6 +438,38 @@ int main()
     print_tree(btree_inst2);
     printf("DONE Iter %d\n", iter);
 
+    elem = 23;
+    iter = 6;
+    printf("Removing element %d\n", elem);
+    //bool goright = false;
+    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+    print_tree(btree_inst2);
+    printf("DONE Iter %d\n", iter);
+
+    elem = 22;
+    iter = 7;
+    printf("Removing element %d\n", elem);
+    //bool goright = false;
+    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+    print_tree(btree_inst2);
+    printf("DONE Iter %d\n", iter);
+
+    elem = 21;
+    iter = 8;
+    printf("Removing element %d\n", elem);
+    //bool goright = false;
+    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+    print_tree(btree_inst2);
+    printf("DONE Iter %d\n", iter);
+
+    elem = 27;
+    iter = 9;
+    printf("Removing element %d\n", elem);
+    //bool goright = false;
+    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+    print_tree(btree_inst2);
+    printf("DONE Iter %d\n", iter);
+
     /*add_elem(2, btree_inst2, btree_inst2);
     print_tree(btree_inst2);
     printf("DONE Iter 1\n");
