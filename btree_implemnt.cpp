@@ -228,61 +228,105 @@ bool remove_elem(int key, btree*& tree_root, btree*& tree_root_parent) { //secon
         return true;
     }
 
-    //if we are one level above leaf
-    //if (tree_root->tree_ptr[i]->tree_ptr[0] == nullptr) {
-        if (removed) { //from leaf
-            //if removing from left subtree and it becomes <2 and right subtree is LESS than half full, then merge left subtree with parent node 
-            //(and remove parent node and shift left the rmaininig pointers and keys) and with right subtree
-            //A1
-            if (tree_root->tree_ptr[i]->curr_fill == tree_root->order / 2 - 2 && i == 0 && tree_root->tree_ptr[i + 1]->curr_fill < tree_root->order / 2) {
-                tree_root->tree_ptr[i]->keys[tree_root->tree_ptr[i]->curr_fill] = tree_root->keys[i];
-                tree_root->tree_ptr[i]->curr_fill++;
-                //on leaf level copy right subtree into left subtree
-                for (int j = 0; j < tree_root->tree_ptr[i + 1]->curr_fill; j++) {
-                    tree_root->tree_ptr[i]->keys[j + tree_root->tree_ptr[i]->curr_fill] = tree_root->tree_ptr[i + 1]->keys[j];
-                    //below ptr copy is releavnt only for if node's level below is not leaf - but won't hurt to do if it is.
-                    tree_root->tree_ptr[i]->tree_ptr[tree_root->tree_ptr[i]->curr_fill + j] = tree_root->tree_ptr[i + 1]->tree_ptr[j];
-                }
-                tree_root->tree_ptr[i]->curr_fill += tree_root->tree_ptr[i + 1]->curr_fill;
-                //below releavnt for if node's level beliw is not leaft - copy rightmost pointer from right subtree as well to left subtree
-                tree_root->tree_ptr[i]->tree_ptr[tree_root->tree_ptr[i]->curr_fill] = tree_root->tree_ptr[i + 1]->tree_ptr[tree_root->tree_ptr[i + 1]->curr_fill];
-                delete tree_root->tree_ptr[i + 1];
-                //on parent level shift left onto space that want to remove the lements to the right of the one that want to remove
-                for (int j = i; j < tree_root->curr_fill - 1; j++) {
-                    tree_root->keys[j] = tree_root->keys[j + 1];
-                    //keep j=i ptr, i.e. left one, as is
-                    tree_root->tree_ptr[j + 1] = tree_root->tree_ptr[j + 2];
-                }
-                tree_root->curr_fill--;
-                tree_root->tree_ptr[tree_root->curr_fill + 1] = nullptr;
-                tree_root->keys[tree_root->curr_fill] = -1;
-                return true;
+    if (removed) { 
+        //if removing from left subtree and it becomes <2 and right subtree is LESS than half full, then merge left subtree with parent node 
+        //(and remove parent node and shift left the rmaininig pointers and keys) and with right subtree
+        //A1
+        if (tree_root->tree_ptr[i]->curr_fill == tree_root->order / 2 - 2 && i == 0 && tree_root->tree_ptr[i + 1]->curr_fill < tree_root->order / 2) {
+            tree_root->tree_ptr[i]->keys[tree_root->tree_ptr[i]->curr_fill] = tree_root->keys[i];
+            tree_root->tree_ptr[i]->curr_fill++;
+            //on leaf level copy right subtree into left subtree
+            for (int j = 0; j < tree_root->tree_ptr[i + 1]->curr_fill; j++) {
+                tree_root->tree_ptr[i]->keys[j + tree_root->tree_ptr[i]->curr_fill] = tree_root->tree_ptr[i + 1]->keys[j];
+                //below ptr copy is releavnt only for if node's level below is not leaf - but won't hurt to do if it is.
+                tree_root->tree_ptr[i]->tree_ptr[tree_root->tree_ptr[i]->curr_fill + j] = tree_root->tree_ptr[i + 1]->tree_ptr[j];
             }
-            //if removing from left subtree and it becomes <2 and right subtree is MORE than half full, then steal from right subtree leftmost element and make new root
-            //and move previous root to rightmost elemtn in left subtree
-            else if (tree_root->tree_ptr[i]->curr_fill == tree_root->order / 2 - 2 && i == 0 && tree_root->tree_ptr[i + 1]->curr_fill >= tree_root->order / 2) {
-                tree_root->tree_ptr[i]->keys[tree_root->tree_ptr[i]->curr_fill] = tree_root->keys[i];
-                tree_root->tree_ptr[i]->curr_fill++;
-
-                tree_root->keys[i] = tree_root->tree_ptr[i + 1]->keys[0];
-                //shift left by one right subtree due to keys[0] going up to parent
-                for (int j = 0; j < tree_root->tree_ptr[i + 1]->curr_fill - 1; j++) {
-                    tree_root->tree_ptr[i + 1]->keys[j] = tree_root->tree_ptr[i + 1]->keys[j+1];
-                }
-                tree_root->tree_ptr[i+1]->curr_fill--;
-                tree_root->tree_ptr[i + 1]->keys[tree_root->tree_ptr[i + 1]->curr_fill] = -1;
+            tree_root->tree_ptr[i]->curr_fill += tree_root->tree_ptr[i + 1]->curr_fill;
+            //below releavnt for if node's level beliw is not leaft - copy rightmost pointer from right subtree as well to left subtree
+            tree_root->tree_ptr[i]->tree_ptr[tree_root->tree_ptr[i]->curr_fill] = tree_root->tree_ptr[i + 1]->tree_ptr[tree_root->tree_ptr[i + 1]->curr_fill];
+            delete tree_root->tree_ptr[i + 1];
+            //on parent level shift left onto space that want to remove the lements to the right of the one that want to remove
+            for (int j = i; j < tree_root->curr_fill - 1; j++) {
+                tree_root->keys[j] = tree_root->keys[j + 1];
+                //keep j=i ptr, i.e. left one, as is
+                tree_root->tree_ptr[j + 1] = tree_root->tree_ptr[j + 2];
             }
-            //if removing from left subtree and it DOES NOT become <2, then do nothing.
-            else if (tree_root->tree_ptr[i]->curr_fill > tree_root->order / 2 - 2) {
-                return true;
-            }
-            //TODOelse HANDLE SIMIALRLY RIGHT SUBTREE. And then handle if we are at inter node level rather than next below being leaf...
-            //NEXTT TODO: handle first left subtree if it i>0 as in blinkining red in Btree page.
-
-            //TODO: check if this level above leaf is now not <2. If it is, deal with it.
-            //if (tree_root->curr_fill == tree_root->order / 2 - 2 && )
-            //CHECK this when have gone above this level.
+            tree_root->curr_fill--;
+            tree_root->tree_ptr[tree_root->curr_fill + 1] = nullptr;
+            tree_root->keys[tree_root->curr_fill] = -1;
+            return true;
         }
+        //if removing from left subtree and it becomes <2 and right subtree is MORE than half full, then steal from right subtree leftmost element and make new root
+        //and move previous root to rightmost elemtn in left subtree
+        else if (tree_root->tree_ptr[i]->curr_fill == tree_root->order / 2 - 2 && i == 0 && tree_root->tree_ptr[i + 1]->curr_fill >= tree_root->order / 2) {
+            tree_root->tree_ptr[i]->keys[tree_root->tree_ptr[i]->curr_fill] = tree_root->keys[i];
+            tree_root->tree_ptr[i]->curr_fill++;
+
+            tree_root->keys[i] = tree_root->tree_ptr[i + 1]->keys[0];
+            //shift left by one right subtree due to keys[0] going up to parent
+            for (int j = 0; j < tree_root->tree_ptr[i + 1]->curr_fill - 1; j++) {
+                tree_root->tree_ptr[i + 1]->keys[j] = tree_root->tree_ptr[i + 1]->keys[j + 1];
+            }
+            tree_root->tree_ptr[i + 1]->curr_fill--;
+            tree_root->tree_ptr[i + 1]->keys[tree_root->tree_ptr[i + 1]->curr_fill] = -1;
+        }
+        //if removing from left subtree and it DOES NOT become <2, then do nothing.
+        else if (tree_root->tree_ptr[i]->curr_fill > tree_root->order / 2 - 2) {
+            return true;
+        }
+        //if left subtree is <2 but it's not the leftmost subtree, then merge with lefter one, assuming it is not more than half full
+        else if (tree_root->tree_ptr[i]->curr_fill == tree_root->order / 2 - 2 && i > 0 && tree_root->tree_ptr[i - 1]->curr_fill < tree_root->order / 2) {
+            //adding root to lefter subtree
+            tree_root->tree_ptr[i-1]->keys[tree_root->tree_ptr[i-1]->curr_fill] = tree_root->keys[i-1];
+            tree_root->tree_ptr[i-1]->curr_fill++;
+            //on leaf level copy right (left really) subtree into left (lefter really) subtree
+            for (int j = 0; j < tree_root->tree_ptr[i]->curr_fill; j++) {
+                tree_root->tree_ptr[i-1]->keys[j + tree_root->tree_ptr[i-1]->curr_fill] = tree_root->tree_ptr[i]->keys[j];
+                //below ptr copy is releavnt only for if node's level below is not leaf - but won't hurt to do if it is.
+                tree_root->tree_ptr[i-1]->tree_ptr[tree_root->tree_ptr[i-1]->curr_fill + j] = tree_root->tree_ptr[i]->tree_ptr[j];
+            }
+            tree_root->tree_ptr[i-1]->curr_fill += tree_root->tree_ptr[i]->curr_fill;
+            //below releavnt for if node's level beliw is not leaft - copy rightmost pointer from right subtree as well to left subtree
+            tree_root->tree_ptr[i-1]->tree_ptr[tree_root->tree_ptr[i-1]->curr_fill] = tree_root->tree_ptr[i]->tree_ptr[tree_root->tree_ptr[i]->curr_fill];
+            delete tree_root->tree_ptr[i];
+            //on parent level shift left onto space that want to remove the lements to the right of the one that want to remove
+            for (int j = i-1; j < tree_root->curr_fill - 1; j++) {
+                tree_root->keys[j] = tree_root->keys[j + 1];
+                //keep j=i ptr, i.e. left one, as is
+                tree_root->tree_ptr[j + 1] = tree_root->tree_ptr[j + 2];
+            }
+            tree_root->curr_fill--;
+            tree_root->tree_ptr[tree_root->curr_fill + 1] = nullptr;
+            tree_root->keys[tree_root->curr_fill] = -1;
+            return true;
+        }
+        //if left subtree is <2 but it's not the leftmost subtree, then steal from lefter one, assuming it is more than half full
+        else if (tree_root->tree_ptr[i]->curr_fill == tree_root->order / 2 - 2 && i > 0 && tree_root->tree_ptr[i - 1]->curr_fill >= tree_root->order / 2) {
+            //shift right by one the left (right really) subtree and then put in place [0] the root key
+            for (int j = tree_root->tree_ptr[i]->curr_fill; j > 0; j--) {
+                tree_root->tree_ptr[i]->keys[j] = tree_root->tree_ptr[i]->keys[j - 1];
+                tree_root->tree_ptr[i]->tree_ptr[j + 1] = tree_root->tree_ptr[i]->tree_ptr[j];
+            }
+            tree_root->tree_ptr[i]->keys[0] = tree_root->keys[i - 1];
+            tree_root->tree_ptr[i]->tree_ptr[1] = tree_root->tree_ptr[i]->tree_ptr[0];
+            tree_root->tree_ptr[i]->curr_fill++;
+            //take lefter substree's rightmost subtree and assign to left (right really) [0] key's subtree
+            tree_root->tree_ptr[i]->tree_ptr[0] = tree_root->tree_ptr[i - 1]->tree_ptr[tree_root->tree_ptr[i - 1]->curr_fill];
+            //set as new root the rightmost key of lefter subtree
+            tree_root->keys[i - 1] = tree_root->tree_ptr[i - 1]->keys[tree_root->tree_ptr[i - 1]->curr_fill - 1];
+            //remove last key in lefter subtree now and set the rightmost subtree pntr to null since already assigned it to left (right) subtree above
+            tree_root->tree_ptr[i - 1]->keys[tree_root->tree_ptr[i - 1]->curr_fill - 1] = -1;
+            tree_root->tree_ptr[i - 1]->tree_ptr[tree_root->tree_ptr[i - 1]->curr_fill] = nullptr;
+            tree_root->tree_ptr[i - 1]->curr_fill--;
+        }
+
+        //TODOelse HANDLE SIMIALRLY RIGHT SUBTREE. And then handle if we are at inter node level rather than next below being leaf...
+        //NEXTT TODO: handle first left subtree if it i>0 as in blinkining red in Btree page.
+
+        //TODO: check if this level above leaf is now not <2. If it is, deal with it.
+        //if (tree_root->curr_fill == tree_root->order / 2 - 2 && )
+        //CHECK this when have gone above this level.
+    }
  
 }
 
@@ -342,8 +386,52 @@ int main()
     }
     printf("\nDone\n");
 
-    int elem = 4;
+    int elem = 1;
     int iter = 0;
+    printf("Removing element %d\n", elem);
+    //bool goright = false;
+    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+    print_tree(btree_inst2);
+    printf("DONE Iter %d\n", iter);
+
+    elem = 24;
+    iter = 1;
+    printf("Removing element %d\n", elem);
+    //bool goright = false;
+    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+    print_tree(btree_inst2);
+    printf("DONE Iter %d\n", iter);
+
+    elem = 12;
+    iter = 2;
+    printf("Removing element %d\n", elem);
+    //bool goright = false;
+    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+    print_tree(btree_inst2);
+    printf("DONE Iter %d\n", iter);
+
+    add_elem(27, btree_inst2, btree_inst2, addEvenIfExists);
+    add_elem(28, btree_inst2, btree_inst2, addEvenIfExists);
+    add_elem(29, btree_inst2, btree_inst2, addEvenIfExists);
+
+    elem = 6;
+    iter = 3;
+    printf("Removing element %d\n", elem);
+    //bool goright = false;
+    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+    print_tree(btree_inst2);
+    printf("DONE Iter %d\n", iter);
+
+    elem = 5;
+    iter = 4;
+    printf("Removing element %d\n", elem);
+    //bool goright = false;
+    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+    print_tree(btree_inst2);
+    printf("DONE Iter %d\n", iter);
+
+    elem = 4;
+    iter = 5;
     printf("Removing element %d\n", elem);
     //bool goright = false;
     remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
