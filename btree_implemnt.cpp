@@ -60,11 +60,8 @@ struct addElem_returnVal {
 
 //TODO!!!!!!!!!!!!!!!!!!!!!!!!:
 //1) Add code to work with even order number; currently works only with odd
-//2) DONE: Remove pass by reference added and midKey and return them instead together with btree* - I guess create a struct.
 //3) I assume eed to delete "new" objects.
-//4) Add remove element funcitonality
 //5) IMpelment preemptive insertion
-//6) DONE: Do not add element if already exists
 
 addElem_returnVal add_elem(int key, btree*& tree_root, btree*& tree_root_parent, bool addAlways) { //second btree is parent root
     int i = 0;
@@ -320,12 +317,6 @@ bool remove_elem(int key, btree*& tree_root, btree*& tree_root_parent) { //secon
             tree_root->tree_ptr[i - 1]->curr_fill--;
         }
 
-        //TODOelse HANDLE SIMIALRLY RIGHT SUBTREE. And then handle if we are at inter node level rather than next below being leaf...
-        //NEXTT TODO: handle first left subtree if it i>0 as in blinkining red in Btree page.
-
-        //TODO: check if this level above leaf is now not <2. If it is, deal with it.
-        //if (tree_root->curr_fill == tree_root->order / 2 - 2 && )
-        //CHECK this when have gone above this level.
     }
  
 }
@@ -470,66 +461,7 @@ int main()
     print_tree(btree_inst2);
     printf("DONE Iter %d\n", iter);
 
-    /*add_elem(2, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 1\n");
-    add_elem(3, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 1\n");
-    add_elem(5, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 2\n");
-    add_elem(7, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 3\n");
-    add_elem(11, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 4\n");
-    add_elem(6, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 5\n");
-    add_elem(15, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 6\n");
-    add_elem(16, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 7\n");
-    add_elem(19, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 8\n");
-    add_elem(20, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 9\n");
-    add_elem(23, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 10\n");
-    add_elem(22, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 11\n");
-    add_elem(25, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 12\n");
-    add_elem(30, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 13\n");
-    add_elem(31, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 14\n");
-    add_elem(32, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 15\n");
-    add_elem(33, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 16\n");
-    add_elem(35, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 17\n");
-    add_elem(37, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 18\n");
-    add_elem(13, btree_inst2, btree_inst2);
-    print_tree(btree_inst2);
-    printf("DONE Iter 19\n");*/
+   
     return 0;
 }
 
