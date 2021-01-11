@@ -1,6 +1,8 @@
 #include <iostream>
 #include <assert.h>
 
+#include "sorts.h"
+
 using namespace std;
 
 class btree {
@@ -62,6 +64,7 @@ struct addElem_returnVal {
 //1) Add code to work with even order number; currently works only with odd
 //3) I assume eed to delete "new" objects.
 //5) IMpelment preemptive insertion
+//6) Add corner cases like removing non existent element..
 
 addElem_returnVal add_elem(int key, btree*& tree_root, btree*& tree_root_parent, bool addAlways) { //second btree is parent root
     int i = 0;
@@ -329,139 +332,167 @@ int main()
     //3) If new element == parent, adding it in left substree if there is space there (given above settings and given we have at least 2 levels already populated) (key > tree_root->keys[i])
 
     cout << "Hello World\n";
-    btree btree_inst;
-    btree btree_inst_actual(5, 3); //USERSET //order 3 means when reaching 3 elemnts in a tree, need to split, i.e. should have max of 2 elements per tree.
-    btree* btree_inst2 = &btree_inst_actual; //need this since otherwise passing &btree_inst_actual instead won't work with add_elem func arg of btree*& val, i.e. cannot pass by reference the adress of the class..
-    time_t seed = time(NULL);
-    seed = 1234;
-    srand(seed);
-    printf("Starting with seed = %lld\n", seed);
-    bool addEvenIfExists = true; //USERSET
-    int elem_num = 40; //USERSET
-    elem_num = 26;
-    int * elem_arr = new int [elem_num];
-    int elem_range = 50; //USERSET
-    bool unique = false; //USERSET
-    unique = true;
-    bool sequential = false; //USERSET
-    sequential = true;
-    for (int iter = 0; iter < elem_num; iter++) {
-        int elem = rand() % elem_range; 
-        if (sequential) {
-            elem = iter + 1;
-        }
-        if (unique) {
-            bool elem_unique = false; 
-            while (!elem_unique) {
-                int search;
-                for (search = 0; search < iter; search++) {
-                    if (elem == elem_arr[search]) {
-                        elem = rand() % elem_range;
-                        break;
+    bool runBtreeCode = false;
+    if (runBtreeCode) {
+        btree btree_inst;
+        btree btree_inst_actual(5, 3); //USERSET //order 3 means when reaching 3 elemnts in a tree, need to split, i.e. should have max of 2 elements per tree.
+        btree* btree_inst2 = &btree_inst_actual; //need this since otherwise passing &btree_inst_actual instead won't work with add_elem func arg of btree*& val, i.e. cannot pass by reference the adress of the class..
+        time_t seed = time(NULL);
+        seed = 1234;
+        srand(seed);
+        printf("Starting with seed = %lld\n", seed);
+        bool addEvenIfExists = true; //USERSET
+        int elem_num = 40; //USERSET
+        elem_num = 26;
+        int* elem_arr = new int[elem_num];
+        int elem_range = 50; //USERSET
+        bool unique = false; //USERSET
+        unique = true;
+        bool sequential = false; //USERSET
+        sequential = true;
+        for (int iter = 0; iter < elem_num; iter++) {
+            int elem = rand() % elem_range;
+            if (sequential) {
+                elem = iter + 1;
+            }
+            if (unique) {
+                bool elem_unique = false;
+                while (!elem_unique) {
+                    int search;
+                    for (search = 0; search < iter; search++) {
+                        if (elem == elem_arr[search]) {
+                            elem = rand() % elem_range;
+                            break;
+                        }
+                    }
+                    if (search == iter) {
+                        elem_unique = true;
                     }
                 }
-                if (search == iter) {
-                    elem_unique = true;
-                }
             }
+            printf("Adding element %d\n", elem);
+            add_elem(elem, btree_inst2, btree_inst2, addEvenIfExists);
+            print_tree(btree_inst2);
+            printf("DONE Iter %d\n", iter);
+            elem_arr[iter] = elem;
         }
-        printf("Adding element %d\n", elem);
-        add_elem(elem, btree_inst2, btree_inst2, addEvenIfExists);
+        printf("Added the following list of elements:\n");
+        for (int elm_i = 0; elm_i < elem_num; elm_i++) {
+            printf("%d ", elem_arr[elm_i]);
+        }
+        printf("\nDone\n");
+
+        int elem = 1;
+        int iter = 0;
+        printf("Removing element %d\n", elem);
+        //bool goright = false;
+        remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
         print_tree(btree_inst2);
         printf("DONE Iter %d\n", iter);
-        elem_arr[iter] = elem;
+
+        elem = 24;
+        iter = 1;
+        printf("Removing element %d\n", elem);
+        //bool goright = false;
+        remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+        print_tree(btree_inst2);
+        printf("DONE Iter %d\n", iter);
+
+        elem = 12;
+        iter = 2;
+        printf("Removing element %d\n", elem);
+        //bool goright = false;
+        remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+        print_tree(btree_inst2);
+        printf("DONE Iter %d\n", iter);
+
+        add_elem(27, btree_inst2, btree_inst2, addEvenIfExists);
+        add_elem(28, btree_inst2, btree_inst2, addEvenIfExists);
+        add_elem(29, btree_inst2, btree_inst2, addEvenIfExists);
+
+        elem = 6;
+        iter = 3;
+        printf("Removing element %d\n", elem);
+        //bool goright = false;
+        remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+        print_tree(btree_inst2);
+        printf("DONE Iter %d\n", iter);
+
+        elem = 5;
+        iter = 4;
+        printf("Removing element %d\n", elem);
+        //bool goright = false;
+        remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+        print_tree(btree_inst2);
+        printf("DONE Iter %d\n", iter);
+
+        elem = 4;
+        iter = 5;
+        printf("Removing element %d\n", elem);
+        //bool goright = false;
+        remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+        print_tree(btree_inst2);
+        printf("DONE Iter %d\n", iter);
+
+        elem = 23;
+        iter = 6;
+        printf("Removing element %d\n", elem);
+        //bool goright = false;
+        remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+        print_tree(btree_inst2);
+        printf("DONE Iter %d\n", iter);
+
+        elem = 22;
+        iter = 7;
+        printf("Removing element %d\n", elem);
+        //bool goright = false;
+        remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+        print_tree(btree_inst2);
+        printf("DONE Iter %d\n", iter);
+
+        elem = 21;
+        iter = 8;
+        printf("Removing element %d\n", elem);
+        //bool goright = false;
+        remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+        print_tree(btree_inst2);
+        printf("DONE Iter %d\n", iter);
+
+        elem = 27;
+        iter = 9;
+        printf("Removing element %d\n", elem);
+        //bool goright = false;
+        remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
+        print_tree(btree_inst2);
+        printf("DONE Iter %d\n", iter);
+
     }
-    printf("Added the following list of elements:\n");
-    for (int elm_i = 0; elm_i < elem_num; elm_i++) {
-        printf("%d ", elem_arr[elm_i]);
-    }
-    printf("\nDone\n");
-
-    int elem = 1;
-    int iter = 0;
-    printf("Removing element %d\n", elem);
-    //bool goright = false;
-    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
-    print_tree(btree_inst2);
-    printf("DONE Iter %d\n", iter);
-
-    elem = 24;
-    iter = 1;
-    printf("Removing element %d\n", elem);
-    //bool goright = false;
-    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
-    print_tree(btree_inst2);
-    printf("DONE Iter %d\n", iter);
-
-    elem = 12;
-    iter = 2;
-    printf("Removing element %d\n", elem);
-    //bool goright = false;
-    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
-    print_tree(btree_inst2);
-    printf("DONE Iter %d\n", iter);
-
-    add_elem(27, btree_inst2, btree_inst2, addEvenIfExists);
-    add_elem(28, btree_inst2, btree_inst2, addEvenIfExists);
-    add_elem(29, btree_inst2, btree_inst2, addEvenIfExists);
-
-    elem = 6;
-    iter = 3;
-    printf("Removing element %d\n", elem);
-    //bool goright = false;
-    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
-    print_tree(btree_inst2);
-    printf("DONE Iter %d\n", iter);
-
-    elem = 5;
-    iter = 4;
-    printf("Removing element %d\n", elem);
-    //bool goright = false;
-    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
-    print_tree(btree_inst2);
-    printf("DONE Iter %d\n", iter);
-
-    elem = 4;
-    iter = 5;
-    printf("Removing element %d\n", elem);
-    //bool goright = false;
-    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
-    print_tree(btree_inst2);
-    printf("DONE Iter %d\n", iter);
-
-    elem = 23;
-    iter = 6;
-    printf("Removing element %d\n", elem);
-    //bool goright = false;
-    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
-    print_tree(btree_inst2);
-    printf("DONE Iter %d\n", iter);
-
-    elem = 22;
-    iter = 7;
-    printf("Removing element %d\n", elem);
-    //bool goright = false;
-    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
-    print_tree(btree_inst2);
-    printf("DONE Iter %d\n", iter);
-
-    elem = 21;
-    iter = 8;
-    printf("Removing element %d\n", elem);
-    //bool goright = false;
-    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
-    print_tree(btree_inst2);
-    printf("DONE Iter %d\n", iter);
-
-    elem = 27;
-    iter = 9;
-    printf("Removing element %d\n", elem);
-    //bool goright = false;
-    remove_elem(elem, btree_inst2, btree_inst2/*, goright*/);
-    print_tree(btree_inst2);
-    printf("DONE Iter %d\n", iter);
-
    
+    printf("Running insertion sort on:\n");
+    int arr[] = { 4,6,2,3,1,5,7,9,15,12 };
+    int sz = sizeof(arr) / sizeof(arr[0]);
+    cout << "arr size = " << sz << endl;
+    print_arr(arr, sz);
+    insertion_sort(arr, sz);
+    printf("Done running insertion sort and it is now:\n");
+    print_arr(arr, sz); 
+
+    printf("Running merge sort on:\n");
+    arr[0] = 4;
+    arr[1] = 6;
+    arr[2] = 2;
+    arr[3] = 3;
+    arr[4] = 1;
+    arr[5] = 5;
+    arr[6] = 7;
+    arr[7] = 9;
+    arr[8] = 15;
+    arr[9] = 12;
+    sz = sizeof(arr) / sizeof(arr[0]);
+    print_arr(arr, sz);
+    merge_sort(arr, 0, sz-1);
+    printf("Done running merge sort and it is now:\n");
+    print_arr(arr, sz);
     return 0;
 }
 

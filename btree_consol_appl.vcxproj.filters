@@ -18,5 +18,13 @@
     <ClCompile Include="btree_implemnt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sorts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sorts.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
