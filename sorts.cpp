@@ -25,11 +25,13 @@ void print_arr(int* arr, int arr_sz) {
 }
 
 
+//cmioplexity: O(nlgn) lg is log base 2 n
 void merge_sort(int* arr, int left, int right) {
 	if (left < right) {
 		merge_sort(arr, left, left + (right-left) / 2);
 		merge_sort(arr, left + (right-left) / 2 + 1, right);
-
+		
+		//Below is Merge implementation.
 		int idxL = 0;
 		int idxR = 0;
 		int* arrLeft = new int[(right - left) / 2 + 1];
@@ -73,3 +75,32 @@ void merge_sort(int* arr, int left, int right) {
 	}
 }
 
+//5,2,4,1 -> 2,5,4,1->2,4,5,1->2,4,1,5. 2,1,4,5. 1,2,4,5
+void insertion_sort2(int* arr, int arr_sz) {
+	for (int i = 0; i < arr_sz; i++) {
+		int j = i;
+		while (arr[j + 1] < arr[j] && j >= 0) {
+			//swap and keep comparing
+			int tmp = arr[j];
+			arr[j] = arr[j + 1];
+			arr[j + 1] = arr[j];
+			j--;
+		}
+	}
+}
+
+//5,2,4,1 -> 2,5,4,1->2,4,5,1 . 2,4,5,5. 2,4,4,5. 2,2,4,5. 
+//or take above 2 and merge with imrpeovment of book for doing only one assignment inside while loop..
+//AT THE END, below is not a merge of my sort2 but rather a different way to do the same - where reducing by one asignment. It is a big deal..
+void insertion_sort3(int* arr, int arr_sz) {
+	for (int i = 0; i < arr_sz; i++) {
+		int j = i;
+		int key = arr[j + 1];
+		while (key < arr[j] && j >= 0) {
+			//swap and keep comparing
+			arr[j + 1] = arr[j];
+			j--;
+		}
+		arr[j+1] = key;
+	}
+}

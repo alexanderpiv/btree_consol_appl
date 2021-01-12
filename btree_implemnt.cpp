@@ -478,21 +478,32 @@ int main()
     print_arr(arr, sz); 
 
     printf("Running merge sort on:\n");
-    arr[0] = 4;
-    arr[1] = 6;
-    arr[2] = 2;
-    arr[3] = 3;
-    arr[4] = 1;
-    arr[5] = 5;
-    arr[6] = 7;
-    arr[7] = 9;
-    arr[8] = 15;
-    arr[9] = 12;
-    sz = sizeof(arr) / sizeof(arr[0]);
-    print_arr(arr, sz);
-    merge_sort(arr, 0, sz-1);
+    int arr2[] = { 4,6,2,3,1,5,7,9,15,12,8 };
+    int sz2 = sizeof(arr2) / sizeof(arr2[0]);
+    sz = sizeof(arr2) / sizeof(arr2[0]);
+    print_arr(arr2, sz2);
+    merge_sort(arr2, 0, sz2-1);
     printf("Done running merge sort and it is now:\n");
-    print_arr(arr, sz);
+    print_arr(arr2, sz2);
+
+    printf("Running insertion sort variantion 2 on:\n");
+    int arr3[] = { 4,6,2,3,1,5,7,9,15,12,8 };
+    int sz3 = sizeof(arr3) / sizeof(arr3[0]);
+    sz3 = sizeof(arr3) / sizeof(arr3[0]);
+    print_arr(arr3, sz3);
+    merge_sort(arr3, 0, sz3 - 1);
+    printf("Done running insertion sort variantion 2 and it is now:\n");
+    print_arr(arr3, sz3);
+
+    printf("Running insertion sort variantion 3 on:\n");
+    int arr4[] = { 4,6,2,3,1,5,7,9,15,12,8 };
+    int sz4 = sizeof(arr4) / sizeof(arr4[0]);
+    sz4 = sizeof(arr4) / sizeof(arr4[0]);
+    print_arr(arr4, sz4);
+    merge_sort(arr4, 0, sz4 - 1);
+    printf("Done running insertion sort variantion 3 and it is now:\n");
+    print_arr(arr4, sz4);
+
     return 0;
 }
 
