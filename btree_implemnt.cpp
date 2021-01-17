@@ -2,6 +2,7 @@
 #include <assert.h>
 
 #include "sorts.h"
+#include "heap.cpp"
 
 using namespace std;
 
@@ -324,6 +325,8 @@ bool remove_elem(int key, btree*& tree_root, btree*& tree_root_parent) { //secon
  
 }
 
+
+
 int main()
 {
     //Current implementation and settings are as follows:
@@ -503,6 +506,72 @@ int main()
     merge_sort(arr4, 0, sz4 - 1);
     printf("Done running insertion sort variantion 3 and it is now:\n");
     print_arr(arr4, sz4);
+
+    printf("Running heap..no longer as in book since modified input to version 2\n");
+    bin_heap bheap(20);
+    printf("Before max_heapify\n");
+    bheap.print_arr();
+    printf("After max_heapify\n");
+    bheap.max_heapify(2);
+    bheap.print_arr();
+    printf("Done running heap..\n");
+
+    printf("Running heap2..no longer as in book since modified input to version 2\n");
+    bin_heap bheap2(20);
+    printf("Before max_heapify2\n");
+    bheap2.print_arr();
+    printf("After max_heapify2\n");
+    bheap2.max_heapify2(2);
+    bheap2.print_arr();
+    printf("Done running heap2..\n");
+
+
+    printf("Running heap3..changed input array to be unsorted completely more or less\n");
+    bin_heap bheap3(20);
+    printf("Before build_heap\n");
+    bheap3.print_arr();
+    printf("After build_heap\n");
+    bheap3.build_heap();
+    bheap3.print_arr();
+    printf("Done running heap3..\n");
+
+
+    printf("Running heap4..heapsort\n");
+    bin_heap bheap4(20);
+    printf("Before heapsort\n");
+    bheap4.print_arr();
+    bheap4.heapsort();
+    printf("After heapsort\n");
+    bheap4.print_arr();
+    printf("Done running heap4..\n");
+
+    printf("Running heap5\n");
+    bin_heap bheap5(20);
+    printf("Before build_heap\n");
+    bheap5.print_arr();
+    printf("After build_heap\n");
+    bheap5.build_heap();
+    bheap5.print_arr();
+    printf("heap max = %d\n", bheap5.heap_maximum());
+    printf("extract and return heap max = %d\n", bheap5.heap_extract_maximum());
+    printf("print now resultalnnt heap\n");
+    bheap5.print_arr();
+    printf("Done running heap5..\n");
+
+    printf("Running heap6..changed input array to be unsorted completely more or less\n");
+    bin_heap bheap6(20);
+    printf("Before build_heap\n");
+    bheap6.print_arr();
+    printf("After build_heap\n");
+    bheap6.build_heap();
+    bheap6.print_arr();
+    bheap6.heap_increase_key2(4, 50);
+    printf("print now resultalnnt heap after modifiying element 4 to value 50\n");
+    bheap6.print_arr();
+    bheap6.heap_insert(30);
+    printf("print now resultalnnt heap after also inserting 30 as new elemtn\n");
+    bheap6.print_arr();
+    printf("Done running heap3..\n");
 
     return 0;
 }

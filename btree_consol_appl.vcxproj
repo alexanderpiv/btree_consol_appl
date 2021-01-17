@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="btree_implemnt.cpp" />
     <ClCompile Include="sorts.cpp" />
+    <ClCompile Include="heap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sorts.h" />
