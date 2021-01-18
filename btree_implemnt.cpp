@@ -573,6 +573,24 @@ int main()
     bheap6.print_arr();
     printf("Done running heap3..\n");
 
+    printf("Running quicksort on:\n");
+    int arr5[] = { 4,6,2,3,1,5,7,9,15,12,8 };
+    int sz5 = sizeof(arr5) / sizeof(arr5[0]);
+    sz5 = sizeof(arr5) / sizeof(arr5[0]);
+    print_arr(arr5, sz5);
+    quicksort(arr5, 0, sz5 - 1);
+    printf("Done running quicksort it is now:\n");
+    print_arr(arr5, sz5);
+
+    printf("Running counting sort on:\n");
+    int arr6[] = { 2,5,3,0,2,3,0,3 };
+    int sz6 = sizeof(arr6) / sizeof(arr6[0]);
+    sz6 = sizeof(arr6) / sizeof(arr6[0]);
+    print_arr(arr6, sz6);
+    counting_sort(arr6, sz6, 6);
+    printf("Done running counting sort it is now:\n");
+    print_arr(arr6, sz6);
+
     return 0;
 }
 

@@ -104,3 +104,59 @@ void insertion_sort3(int* arr, int arr_sz) {
 		arr[j+1] = key;
 	}
 }
+
+int partition(int* arr, int left, int right) {
+	int pivot = arr[right]; //or can be a random one from arr like: int pivot = rand() % right - left; <-haven't verified but looks ok..
+	int i = left - 1;
+	//advance i and swap j with i+1 if current element(arr[j]) is less than pivot
+	for (int j = left; j < right; j++) {
+		if (arr[j] < pivot) {
+			int tmp = arr[j];
+			arr[j] = arr[i + 1];
+			arr[i + 1] = tmp;
+			i++;
+		}
+	}
+	arr[right] = arr[i + 1];
+	arr[i + 1] = pivot;
+	return i + 1;
+}
+
+//O(nlgn) usually but worst is O(n^2) - to get the usual case need to ahve all values unique (ideally) and also should be random order inside (ideally)
+void quicksort(int* arr, int left, int right) {
+	if (left < right) {
+		int q = partition(arr, left, right);
+		quicksort(arr, left, q - 1);
+		quicksort(arr, q + 1, right);
+	}
+}
+
+//O(k)+O(n)+O(k)+O(n) = O(k+n)
+void counting_sort(int* arr, int n, int k) {
+	int* count_arr = new int[k];
+	int* sorted_arr = new int[n];
+	for (int i = 0; i < k; i++) {
+		count_arr[i] = 0; //initialize count array
+	}
+	//go through input array and count how many times each value is seen
+	for (int i = 0; i < n; i++) {
+		count_arr[arr[i]] = count_arr[arr[i]] + 1;
+	}
+	//modify count_arr to hold prior value plus how many times lower values have been seen
+	for (int i = 1; i < k; i++) {
+		count_arr[i] = count_arr[i] + count_arr[i - 1];
+	}
+	//the key operation now
+	for (int i = n-1; i >= 0; i--) {
+		sorted_arr[count_arr[arr[i]] - 1] = arr[i]; //the -1 is to place sorted vals in location 0 to n-1 rather than 1 to n. 
+													//count_arr may have 0 values but they won't be called since we call base on arr[i] and if
+													//arr[i] doesnt have a ceratin value, we won't reference it.
+		count_arr[arr[i]] = count_arr[arr[i]] - 1; //so that repeating numbers go into decreasing locations and not over the written one
+	}
+
+	//write back sorted array into original input arr
+	for (int i = 0; i < n; i++) {
+		arr[i] = sorted_arr[i];
+	}
+}
+
