@@ -3,6 +3,9 @@
 
 #include "sorts.h"
 #include "heap.cpp"
+#include "binary_search_trees.h"
+#include "LCS.h"
+#include "graph.h"
 
 using namespace std;
 
@@ -591,6 +594,212 @@ int main()
     printf("Done running counting sort it is now:\n");
     print_arr(arr6, sz6);
 
+    printf("Running merge sort \n");
+    int arr9[] = { 4,6,2,3,1,5,7,9,15,12,8 };
+    int sz9 = sizeof(arr9) / sizeof(arr9[0]);
+    sz9 = sizeof(arr9) / sizeof(arr9[0]);
+    print_arr(arr9, sz9);
+    mergesort(arr9, 0, sz9 - 1);
+    printf("Done running merge sort\n");
+    print_arr(arr9, sz9);
+
+    printf("\nStarting with binary trees...\n");
+    binTree * binaryTree = new binTree(5);
+    inorderTreeWalk(binaryTree);
+    printf("\nDone printining 1st time - new tree with initial value 5\n");
+    binTree* newNode = new binTree(10);
+    treeInsert(binaryTree, newNode);
+    inorderTreeWalk(binaryTree);
+    printf("\nDone printining 2nd time - inserted 10\n");
+    binTree* newNode2 = new binTree(3);
+    treeInsert2(binaryTree, newNode2);
+    inorderTreeWalk(binaryTree);
+    printf("\nDone printining 3rd time - inserted 3\n");
+    binTree* newNode3 = new binTree(13);
+    treeInsert3(binaryTree, newNode3);
+    inorderTreeWalk(binaryTree);
+    printf("\nDone printining 4th time - inserted 13\n");
+    treeDelete(binaryTree, newNode2);
+    inorderTreeWalk(binaryTree);
+    printf("\nDone printining 5th time - deleted 3 that has no children\n");
+    treeDelete(binaryTree, newNode);
+    inorderTreeWalk(binaryTree);
+    printf("\nDone printining 6th time - deleted 10 that has one child\n");
+
+    binTree* binaryTree2 = new binTree(30);
+    binTree* newNode_1 = new binTree(20);
+    treeInsert3(binaryTree2, newNode_1);
+    binTree* newNode_2 = new binTree(41);
+    treeInsert3(binaryTree2, newNode_2);
+    binTree* newNode_3 = new binTree(15);
+    treeInsert3(binaryTree2, newNode_3);
+    binTree* newNode_4 = new binTree(25);
+    treeInsert3(binaryTree2, newNode_4);
+    binTree* newNode_5 = new binTree(12);
+    treeInsert3(binaryTree2, newNode_5);
+    binTree* newNode_6 = new binTree(34);
+    treeInsert3(binaryTree2, newNode_6);
+    binTree* newNode_7 = new binTree(45);
+    treeInsert3(binaryTree2, newNode_7);
+    binTree* newNode_8 = new binTree(37);
+    treeInsert3(binaryTree2, newNode_8);
+
+    //skip inorderTreeWalk(binaryTree2);
+    //skip printf("\nInitial setup above\n");
+    //skip treeDelete(binaryTree2, newNode_6);
+    //skip treeDelete(binaryTree2, newNode_3);
+    //skip inorderTreeWalk(binaryTree2);
+    //skip printf("\nAfter deleting 35 and 15 setup above\n");
+    binTree* newNode_9 = new binTree(33);
+    treeInsert3(binaryTree2, newNode_9);
+    binTree* newNode_10 = new binTree(31);
+    treeInsert3(binaryTree2, newNode_10);
+    binTree* newNode_11 = new binTree(32);
+    treeInsert3(binaryTree2, newNode_11);
+    binTree* newNode_12 = new binTree(36);
+    treeInsert3(binaryTree2, newNode_12);
+    binTree* newNode_13 = new binTree(40);
+    treeInsert3(binaryTree2, newNode_13);
+    binTree* newNode_14 = new binTree(35);
+    treeInsert3(binaryTree2, newNode_14);
+    binTree* newNode_15 = new binTree(47);
+    treeInsert3(binaryTree2, newNode_15);
+    inorderTreeWalk(binaryTree2);
+    printf("\nInitial setup above\n");
+    //works: treeDelete(binaryTree2, newNode_2); //delete 41
+    //works: treeDelete(binaryTree2, newNode_7); //delete 45
+    //works: treeDelete(binaryTree2, newNode_6); //delete 34
+    //works2: rotate_left(binaryTree2, newNode_2);
+    //works3: rotate_left(binaryTree2, newNode_7);
+    //works4: rotate_left(binaryTree2, newNode_6);
+    rotate_left(binaryTree2, newNode_8);
+    rotate_right(binaryTree2, newNode_13);
+    rotate_right(binaryTree2, newNode_6);
+
+    inorderTreeWalk(binaryTree2);
+    //works: printf("\nAfter deleting 41, 45, 34\n");
+    //works2: printf("\nAfter rotating left 41\n");
+    //works3: printf("\nAfter rotating left 45\n");
+    //works4: printf("\nAfter rotating left 34\n");
+    printf("\nAfter rotating left and right various\n");
+
+    cAndb lcs_struct_inst;
+    string s1 = "ABCBDAB";
+    int s1_length = s1.length(); //preferably pass directly known one sinc this one is in bytes..
+    string s2 = "BDCABA";
+    int s2_length = s2.length();
+    printf("\ns1 length = %d and s2 length = %d\n", s1_length, s2_length);
+    lcs_struct_inst = lcs_length(s1, s1_length, s2, s2_length);
+    printf("\nAbout to oprint LCS\n");
+    print_lcs(lcs_struct_inst.b_in, s1, s1_length, s2_length);
+
+    s1 = "ACCGGTCGAGTGCGCGGAAGCCGGCCGAA";
+    s2 = "GTCGTTCGGAATGCCGTTGCTCTGTAAA";
+    printf("\ns1 length = %d and s2 length = %d\n", s1.length(), s2.length());
+    lcs_struct_inst = lcs_length(s1, s1.length(), s2, s2.length());
+    printf("\nAbout to oprint LCS\n");
+    print_lcs(lcs_struct_inst.b_in, s1, s1.length(), s2.length());
+
+
+    graph graph_inst(6);
+
+    //vertex* v0 = new vertex(0, 0); //nothing reachable from this one say
+    //vertex* v1 = new vertex(1, 1); //undirected here assumed so from 1 reach 
+    vertex* v11 = new vertex(2, 1); //2
+    vertex* v12 = new vertex(5, 1); //and 5
+    //vertex* v2 = new vertex(2, 2);
+    vertex* v22 = new vertex(1, 2); //and vice versa, i.e. from 2 reach 1
+    vertex* v23 = new vertex(5, 2);
+    vertex* v24 = new vertex(3, 2);
+    vertex* v25 = new vertex(4, 2);
+    //vertex* v3 = new vertex(3, 3);
+    vertex* v33 = new vertex(2, 3);
+    vertex* v34 = new vertex(4, 3);
+    //vertex* v4 = new vertex(4, 4);
+    vertex* v44 = new vertex(2, 4);
+    vertex* v45 = new vertex(5, 4);
+    vertex* v46 = new vertex(3, 4);
+    //vertex* v5 = new vertex(5, 5);
+    vertex* v55 = new vertex(4, 5);
+    vertex* v56 = new vertex(1, 5); //and from 5 reach 1
+    vertex* v57 = new vertex(2, 5);
+
+
+    //graph_inst.addVertex(v0);
+    //graph_inst.addVertex(v1);
+    graph_inst.addVertex(v11);
+    graph_inst.addVertex(v12);
+    //graph_inst.addVertex(v2);
+    graph_inst.addVertex(v22);
+    graph_inst.addVertex(v23);
+    graph_inst.addVertex(v24);
+    graph_inst.addVertex(v25);
+    //graph_inst.addVertex(v3);
+    graph_inst.addVertex(v33);
+    graph_inst.addVertex(v34);
+    //graph_inst.addVertex(v4);
+    graph_inst.addVertex(v44);
+    graph_inst.addVertex(v45);
+    graph_inst.addVertex(v46);
+    //graph_inst.addVertex(v5);
+    graph_inst.addVertex(v55);
+    graph_inst.addVertex(v56);
+    graph_inst.addVertex(v57);
+
+    printf("\n");
+    //bfs(graph_inst, 1);
+    //printf("\n");
+    //print_adjList(graph_inst, 1);
+    bfs2(graph_inst, v11);
+    printf("\nFrom 2 to 2 based on vertex->getVal\n");
+    print_shortest_path(graph_inst, v11, v44); 
+    printf("\nFrom 2 to 5 based on vertex->getVal\n");
+    print_shortest_path(graph_inst, v11, v23); 
+    
+    printf("\nbelow two maybe dont work since even though from same vertex logically, BFS was run from a different one.. let's see!\n");
+    printf("\nfrom 2 to 2 based on vertex->getVal\n");
+    print_shortest_path(graph_inst, v33, v11); 
+    printf("\nFrom 1 to 4 based on vertex->getVal\n");
+    print_shortest_path(graph_inst, v56, v34); //from 1 to 4 
+    printf("\nabove two dont work - no path - ok\n");
+    
+    bfs2(graph_inst, v22);
+    printf("\nFrom 1 to 4 based on vertex->getVal\n");
+    print_shortest_path(graph_inst, v22, v55); //from 1 to 4 
+    printf("\nFrom 1 to 4 based on vertex->getVal using another set of vertex dest\n");
+    print_shortest_path(graph_inst, v22, v25); //from 1 to 4 
+
+    printf("\nle me try based on arr val rather than getVal.\n");
+    print_shortest_path(graph_inst, v22, v44); //from 1 to 4 
+
+    bfs2(graph_inst, v56);
+    printf("\n5,1 -> 3,4.\n");
+    print_shortest_path(graph_inst, v56, v46); 
+
+    //Printinting path should think of as for below: v=2 that is adjacent to 1 (2,1) to v=3 that is adjacent to 2(3,2)
+    bfs2(graph_inst, v11);
+    printf("\n2,1->3,2\n");
+    print_shortest_path(graph_inst, v11, v24); //prints 1(0) 2(1)  3(2)
+
+    //v=1 that is adacent to 2 (1,2) to 3 that is adjancent to 2 (3,2)
+    //in general, print path goes from dest vector, traversing through its predecessor, so if pointed not in the shortest direction, will not get shortest,
+    //as is seen in the below two casses.
+    //book treats vertices it seems sometimes as just numbers i guess and not as (v,u), i.e. vertex and its pred. 
+    //So except mathetmically, i don't see how print path can always give the shortest if we think of verties as just single points.
+    bfs2(graph_inst, v22);
+    printf("\n1,2->3,2\n");
+    print_shortest_path(graph_inst, v22, v24); //prints: 1(0) 2(1)  3(2)
+    printf("\n1,2->3,4\n");
+    print_shortest_path(graph_inst, v22, v46); //prints: 1(0) 2(1)  4(2)  3(3)
+
+
+    bfs2(graph_inst, v56);
+    printf("\n1,5->3,2\n");
+    print_shortest_path(graph_inst, v56, v24); //prints: 1(0) 2(1)  3(2)
+
     return 0;
 }
 
+//S1: ACCGGTCGAGTGCGCGGAAGCCGGCCGAA
+//S2: GTCGTTCGGAATGCCGTTGCTCTGTAAA
+//S3: GTCGTCGGAAGCCGGCCGAA

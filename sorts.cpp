@@ -160,3 +160,99 @@ void counting_sort(int* arr, int n, int k) {
 	}
 }
 
+//another take at mergesort..trying to see if can do similar to book myself..
+void merge(int* Arr, int p, int r) {
+	int* arr_p = new int[(r - p)/2 + 1];
+	int* arr_r = new int[(r - p)/2 + 1]; //will have one extra location here when p is one more than r but that's an insignificant memry misuage
+	int p_ptr = 0;
+	int r_ptr = 0;
+	int Arr_ptr = p;
+
+	for (int i = 0; i <= (r - p)/2; i++) {
+		arr_p[i] = Arr[Arr_ptr];
+		Arr_ptr++;
+	}
+	for (int i = 0; i < r - p - (r - p)/2; i++) {
+		arr_r[i] = Arr[Arr_ptr];
+		Arr_ptr++;
+	}
+	Arr_ptr = p;
+	for (int i = p; i <= r; i++) {
+		//OPTIMIZATION: add a last extra element in arr_p and arr_r and give it a max value that normal values cannot achieeve. 
+		//Then can skips all the checks for empty piles and simply compare left with right from p to r.
+		if (p_ptr <= (r - p) / 2 && r_ptr < r - p - (r - p) / 2) {
+			if (arr_p[p_ptr] < arr_r[r_ptr]) {
+				Arr[i] = arr_p[p_ptr];
+				p_ptr++;
+			}
+			else {
+				Arr[i] = arr_r[r_ptr];
+				r_ptr++;
+			}
+		}
+		else if (p_ptr <= (r - p) / 2) {
+			Arr[i] = arr_p[p_ptr];
+			p_ptr++;
+		}
+		else if (r_ptr < r - p - (r - p) / 2) { //can just have else without the further qualificationi since it's the only remainign option
+			Arr[i] = arr_r[r_ptr];
+			r_ptr++;
+		}
+	}
+	delete [] arr_p;
+	delete [] arr_r;
+}
+
+//optimized verison with sentinel, but need also to modify left and right sizes to be exact.
+void merge_opt(int* Arr, int p, int r) {
+	int* arr_p;
+	int* arr_r;
+	if ((r-p) % 2 == 1) {
+		arr_p = new int[(r - p) / 2 + 1 + 1];
+		arr_r = new int[(r - p) / 2 + 1 + 1]; //will have one extra location here when p is one more than r but that's an insignificant memry misuage
+		arr_p[(r - p) / 2 + 1] = INT_MAX;
+		arr_r[(r - p) / 2 + 1] = INT_MAX;
+	}
+	else {
+		arr_p = new int[(r - p) / 2 + 1 + 1];
+		arr_r = new int[(r - p) / 2 + 1]; //will have one extra location here when p is one more than r but that's an insignificant memry misuage
+		arr_p[(r - p) / 2 + 1] = INT_MAX;
+		arr_r[(r - p) / 2] = INT_MAX;
+	}
+	int p_ptr = 0;
+	int r_ptr = 0;
+	int Arr_ptr = p;
+
+	for (int i = 0; i <= (r - p) / 2; i++) {
+		arr_p[i] = Arr[Arr_ptr];
+		Arr_ptr++;
+	}
+
+	for (int i = 0; i < r - p - (r - p) / 2; i++) {
+		arr_r[i] = Arr[Arr_ptr];
+		Arr_ptr++;
+	}
+	Arr_ptr = p;
+	for (int i = p; i <= r; i++) {
+		//OPTIMIZATION: add a last extra element in arr_p and arr_r and give it a max value that normal values cannot achieeve. 
+		//Then can skips all the checks for empty piles and simply compare left with right from p to r.
+		if (arr_p[p_ptr] < arr_r[r_ptr]) {
+			Arr[i] = arr_p[p_ptr];
+			p_ptr++;
+		}
+		else {
+			Arr[i] = arr_r[r_ptr];
+			r_ptr++;
+		}
+	}
+	delete[] arr_p;
+	delete[] arr_r;
+}
+
+void mergesort(int* Arr, int p, int r) {
+	if (p < r) {
+		mergesort(Arr, p, (r-p)/2 + p);
+		mergesort(Arr, (r-p)/2 + p + 1, r);
+		merge_opt(Arr, p, r);
+	}
+}

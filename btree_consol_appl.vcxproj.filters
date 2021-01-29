@@ -24,9 +24,24 @@
     <ClCompile Include="heap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="binary_search_trees.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LCS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sorts.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="binary_search_trees.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LCS.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="graph.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

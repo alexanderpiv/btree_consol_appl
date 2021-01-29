@@ -139,11 +139,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="binary_search_trees.cpp" />
     <ClCompile Include="btree_implemnt.cpp" />
+    <ClCompile Include="LCS.cpp" />
     <ClCompile Include="sorts.cpp" />
     <ClCompile Include="heap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="binary_search_trees.h" />
+    <ClInclude Include="graph.h" />
+    <ClInclude Include="LCS.h" />
     <ClInclude Include="sorts.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
