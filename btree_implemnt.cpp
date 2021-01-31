@@ -6,6 +6,7 @@
 #include "binary_search_trees.h"
 #include "LCS.h"
 #include "graph.h"
+#include "various.h"
 
 using namespace std;
 
@@ -796,6 +797,47 @@ int main()
     bfs2(graph_inst, v56);
     printf("\n1,5->3,2\n");
     print_shortest_path(graph_inst, v56, v24); //prints: 1(0) 2(1)  3(2)
+
+
+    dfs(graph_inst);
+
+
+    graph graph_inst_directed(7); //u = 1, v = 2, w = 3, x = 4, y = 5, z = 6 . u->x/v; v->y; x->v; y->x; w->y/z; z->z
+
+    //vertex* v0 = new vertex(0, 0); //nothing reachable from this one say
+    //vertex* v1 = new vertex(1, 1); //undirected here assumed so from 1 reach 
+    vertex* v1 = new vertex(4, 1); 
+    vertex* v2 = new vertex(2, 1); 
+
+    vertex* v3 = new vertex(5, 2);
+
+    vertex* v4 = new vertex(5, 3);
+    vertex* v5 = new vertex(6, 3);
+
+    vertex* v6 = new vertex(2, 4);
+
+    vertex* v7 = new vertex(4, 5);
+
+    vertex* v8 = new vertex(6, 6);
+
+
+    graph_inst_directed.addVertex(v1);
+    graph_inst_directed.addVertex(v2);
+    graph_inst_directed.addVertex(v3);
+    graph_inst_directed.addVertex(v4);
+    graph_inst_directed.addVertex(v5);
+    graph_inst_directed.addVertex(v6);
+    graph_inst_directed.addVertex(v7);
+    graph_inst_directed.addVertex(v8);
+
+    printf("\nRunning dfs on directed graph and then printing all vertices..\n");
+    printf("u = 1, v = 2, w = 3, x = 4, y = 5, z = 6 . u->x/v; v->y; x->v; y->x; w->y/z; z->z\n");
+    dfs(graph_inst_directed);
+    dfs_printAll(graph_inst_directed);
+
+
+    exercise_vectors();
+    exercise_map();
 
     return 0;
 }

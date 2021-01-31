@@ -34,6 +34,8 @@ public:
 	int dist; //distance
 	int pred; //predecessor
 	vertex* pred2;
+	int dTime;
+	int fTime;
 private:
 	int val;
 	int weight;
@@ -79,6 +81,7 @@ public:
 	queue<vertex*> q; //not private just for convinience
 	bool* visited;
 	queue<vertex*> v_q;
+	int dfs_time;
 private:
 	vertex** adj_list; //a list of vertex pointers
 	int size;
@@ -197,27 +200,61 @@ void print_shortest_path(graph G, vertex* s, vertex* v) {
 		printf("%d(%d)  ", v->getVal(), v->dist);
 	}
 }
-/*
-vertex(val, arrloc);
-vertex* v0 = new vertex(0, 0); //nothing reachable from this one say
-vertex* v1 = new vertex(1, 1); //undirected here assumed so from 1 reach 
-vertex* v11 = new vertex(2, 1); //2
-vertex* v12 = new vertex(5, 1); //and 5
-vertex* v2 = new vertex(2, 2);
-vertex* v22 = new vertex(1, 2); //and vice versa, i.e. from 2 reach 1
-vertex* v23 = new vertex(5, 2);
-vertex* v24 = new vertex(3, 2);
-vertex* v25 = new vertex(4, 2);
-vertex* v3 = new vertex(3, 3);
-vertex* v33 = new vertex(2, 3);
-vertex* v34 = new vertex(4, 3);
-vertex* v4 = new vertex(4, 4);
-vertex* v44 = new vertex(2, 4);
-vertex* v45 = new vertex(5, 4);
-vertex* v46 = new vertex(3, 4);
-vertex* v5 = new vertex(5, 5);
-vertex* v55 = new vertex(4, 5);
-vertex* v56 = new vertex(1, 5); //and from 5 reach 1
-vertex* v57 = new vertex(2, 5);
-*/
 
+
+void dfs_visit(graph g, vertex* u) {
+	g.dfs_time = g.dfs_time + 1;
+	u->dTime = g.dfs_time;
+	u->color = 1;
+	vertex* v = g.getAdjList()[u->getVal()];
+	while (v != nullptr) {
+		if (v->color == 0) {
+			//v->color = 1; //gray
+			//v->dist = u->dist + 1;
+			v->pred2 = u;
+			//g.v_q.push(v);
+			dfs_visit(g, v);
+		}
+		v = v->getNext();
+	}
+	u->color = 2;
+	g.dfs_time = g.dfs_time + 1;
+	u->fTime = g.dfs_time;
+}
+
+void dfs(graph g) {
+	//go through all vertices and set their properties..
+	for (int i = 0; i < g.getSize(); i++) {
+		vertex* u = g.getAdjList()[i];
+		while (u != nullptr) {
+			u->color = 0;
+			//v->dist = INT_MAX;
+			u->pred2 = nullptr;
+			u = u->getNext();
+		}
+	}
+
+	g.dfs_time = 0;
+	for (int i = 0; i < g.getSize(); i++) {
+		vertex* v = g.getAdjList()[i];
+		while (v != nullptr) {
+			if (v->color == 0) {
+				dfs_visit(g, v);
+			}
+			//v->dist = INT_MAX;
+			//v->pred2 = nullptr;
+			v = v->getNext();
+		}
+	}
+}
+
+void dfs_printAll(graph g) {
+	//go through all vertices and set their properties..
+	for (int i = 0; i < g.getSize(); i++) {
+		vertex* u = g.getAdjList()[i];
+		while (u != nullptr) {
+			printf("%d,%d d=%d f=%d\n", u->getVal(), i, u->dTime, u->fTime);
+			u = u->getNext();
+		}
+	}
+}

@@ -44,5 +44,8 @@
     <ClInclude Include="graph.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="various.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
