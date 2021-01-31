@@ -6,6 +6,8 @@
 #include <regex>
 #include <algorithm> //for sort function
 #include <functional> //for hash function
+#include <numeric> //for accumulate
+#include <unordered_set>
 
 using namespace std;
 
@@ -221,4 +223,122 @@ void exercise_map() {
 	}
 
 	//map_LastFirst[""]
+}
+
+//You are given an array of positive numbers from 1 to n, such that all numbers from 1 to n are present except one number x.You have to find x.The input array is not sorted.
+//ex: n=8 ; 3,7,1,2,8,4,5 . Return 6, which is the missing number.
+//complexiting should be n (for init) + n (for counting) + n (for checking count value) = 3n = O(n) , so linear in time (O(n) is better than O(nlgn)).
+int find_missing(const vector<int>& input) {
+	int* count_arr = new int[input.size() + 1];
+	for (unsigned int i = 0; i <= input.size(); i++) {
+		count_arr[i] = 0;
+	}
+	for (auto i = input.begin(); i != input.end(); ++i) {
+		count_arr[*i] = 1;
+	}
+	for (unsigned int i = 1; i <= input.size(); i++) {
+		if (count_arr[i] != 1) {
+			return i;
+		}
+	}
+}
+
+//answer says compelity is O(n) which is similar to mine actually.. i mean in mine there are more constant factors but O is the same..
+int find_missing_answr(const vector<int>& input) {
+	// calculate sum of all elements 
+	// in input vector
+	auto sum_of_elements = std::accumulate(
+		input.begin(), input.end(), 0);
+	// There is exactly 1 number missing 
+	int n = input.size() + 1;
+	int actual_sum = (n * (n + 1)) / 2;
+	return actual_sum - sum_of_elements;
+}
+
+void test(int n) {
+	int missing_element = rand() % n + 1;
+	vector<int> v;
+	for (int i = 1; i <= n; ++i) {
+		if (i == missing_element) {
+			continue;
+		}
+		v.push_back(i);
+	}
+	int actual_missing = find_missing(v);
+	cout << "Expected Missing = " << missing_element << " Actual Missing = " << actual_missing << endl;
+}
+/*
+int main() {
+	srand(time(NULL));
+	for (int i = 1; i < 10; ++i)
+		test(100000);
+
+	return 0;
+}
+*/
+
+//Given an array of integersand a value, determine if there are any two integers in the array whose sum is equal to the given value.Return true if the sum existsand return false if it does not.
+//ex: 5,7,1,2,8,4,3 . Target sum = 10 so can use 7+3 or 2+8 so return true. If Target sum = 19 for instance, return false.
+bool find_sum_of_two(vector<int>& A, int val) {
+	map<int, bool> mapp;
+	for (auto vec_it = A.begin(); vec_it != A.end(); ++vec_it) {
+		mapp[*vec_it] = true;
+		cout << "adding to map:" << *vec_it << endl;
+	}
+	for (auto vec_it = A.begin(); vec_it != A.end(); ++vec_it) {
+		cout << "val=" << val << "; *vec_it=" << *vec_it << endl;
+		//either use count which returns 1 if found or 0 otherwise
+		if (mapp.count(val - *vec_it)) {
+			cout << "and mapp has:" << val - *vec_it << endl;
+			return true;
+		}
+		//OR use find which returns iterator to found location or end() otherwise.
+		/*if (mapp.find(val - *vec_it) != mapp.end()) {
+			cout<<"2and mapp has:"<<val - *vec_it<<endl;
+			cout<<*vec_it<<endl;
+			return true;
+		}*/
+	}
+	return false;
+}
+
+//You are given a dictionary of words and a large input string. You have to find out whether the input string can be completely segmented into the words of a given dictionary. 
+bool can_segment_string(string s, unordered_set<string>& dictionary) {
+	for (auto set_iter = dictionary.begin(); set_iter != dictionary.end(); ++set_iter) {
+		cout << *set_iter << endl;
+	}
+	cout << "search for: " << s << endl;
+
+	//go thorugh each word in the dicstionsary and check if any matches a consecutive list of chars in s
+	for (auto set_iter = dictionary.begin(); set_iter != dictionary.end(); ++set_iter) {
+		//The position of the first character of the first match.
+		//If no matches were found, the function returns string::npos.
+		size_t found = s.find(*set_iter, 0);
+		if (found != std::string::npos && found == 0) {
+			cout << "first find=" << *set_iter << ". Next posiiotn = " << (*set_iter).length() << endl;
+			for (auto set_iter2 = dictionary.begin(); set_iter2 != dictionary.end(); ++set_iter2) {
+				size_t found2 = s.find(*set_iter2, (*set_iter).length());
+				if (found2 != std::string::npos && found2 == (*set_iter).length()) {
+					cout << "second find=" << *set_iter2 << endl;
+					cout << *set_iter << " " << *set_iter2 << endl;
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+bool can_segment_string2(string s, unordered_set <string>& dictonary) {
+	for (int i = 1; i <= s.length(); ++i) {
+		string first = s.substr(0, i);
+		if (dictonary.find(first) != dictonary.end()) {
+			string second = s.substr(i);
+			if (second.empty() || dictonary.find(second) != dictonary.end() || can_segment_string(second, dictonary)) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
