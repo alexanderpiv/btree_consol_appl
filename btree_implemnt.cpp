@@ -839,6 +839,14 @@ int main()
     exercise_vectors();
     exercise_map();
 
+    cout << "THE MOST COMMOND WORD MINUS BANNED IS: "<<most_common_word("def") << endl;
+
+    threesome();
+
+    threeSum();
+    twoSum();
+    twoSum_hash();
+
     return 0;
 }
 

@@ -8,6 +8,9 @@
 #include <functional> //for hash function
 #include <numeric> //for accumulate
 #include <unordered_set>
+#include <cctype>  //for tolower
+#include <set>
+#include <unordered_map>
 
 using namespace std;
 
@@ -280,6 +283,7 @@ int main() {
 //Given an array of integersand a value, determine if there are any two integers in the array whose sum is equal to the given value.Return true if the sum existsand return false if it does not.
 //ex: 5,7,1,2,8,4,3 . Target sum = 10 so can use 7+3 or 2+8 so return true. If Target sum = 19 for instance, return false.
 bool find_sum_of_two(vector<int>& A, int val) {
+	//TODOOOOO: SHOULD EXCLUDE from val-*vec_it *vec_it since used it already !! unless that's a valid case.....
 	map<int, bool> mapp;
 	for (auto vec_it = A.begin(); vec_it != A.end(); ++vec_it) {
 		mapp[*vec_it] = true;
@@ -288,7 +292,7 @@ bool find_sum_of_two(vector<int>& A, int val) {
 	for (auto vec_it = A.begin(); vec_it != A.end(); ++vec_it) {
 		cout << "val=" << val << "; *vec_it=" << *vec_it << endl;
 		//either use count which returns 1 if found or 0 otherwise
-		if (mapp.count(val - *vec_it)) {
+		if (mapp.count(val - *vec_it)) { //AND ADD: && val-*vec_it != *vec_it to avoid using same element.. unless it is repeatd in the input array..
 			cout << "and mapp has:" << val - *vec_it << endl;
 			return true;
 		}
@@ -341,4 +345,279 @@ bool can_segment_string2(string s, unordered_set <string>& dictonary) {
 		}
 	}
 	return false;
+}
+
+//substr: The substring is the portion of the object that starts at character position pos and spans len characters (or until the end of the string, whichever comes first).
+
+//!!!!!!!!!!!!!!!!!!TODO1: WRITE A VERSION WHERE INPUT IS NOT FROM STRING but from a Vector of strings.!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+string most_common_word(string s) {
+
+	/*ONE SOLUTION - assuming input list is a vector of words... eventually get to a map and later do same, i.e. get a set, etc*/
+
+	//i guess if input is a vector, we won't have the punctation to process..
+	vector<string>inp_vec;
+	inp_vec.push_back("Bob");
+	inp_vec.push_back("hit");
+	inp_vec.push_back("a");
+	inp_vec.push_back("ball");
+	inp_vec.push_back("the");
+	inp_vec.push_back("hit");
+	inp_vec.push_back("BALL");
+	inp_vec.push_back("flew");
+	inp_vec.push_back("far");
+	inp_vec.push_back("after");
+	inp_vec.push_back("it");
+	inp_vec.push_back("was");
+	inp_vec.push_back("hit");
+	cout << "vector list original version" << endl;
+	for (auto it = inp_vec.begin(); it != inp_vec.end(); ++it) {
+		cout << *it << endl;
+	}
+	for (auto it = inp_vec.begin(); it != inp_vec.end(); ++it) {
+		string inpLower = *it;
+		transform(inpLower.begin(), inpLower.end(), inpLower.begin(), [](unsigned char c) { return tolower(c); });
+		*it = inpLower;
+	}
+	cout << "vector list tolower version" << endl;
+	for (auto it = inp_vec.begin(); it != inp_vec.end(); ++it) {
+		cout << *it << endl;
+	}
+
+	map<string, int> word_frq;
+	for (auto it = inp_vec.begin(); it != inp_vec.end(); ++it) {
+		if (word_frq.find(*it) != word_frq.end()) {
+			word_frq[*it] += 1;
+		}
+		else {
+			word_frq[*it] = 1;
+		}
+	}
+	cout << "Start: Just shwoing map.." << endl;
+	for (auto it = word_frq.begin(); it != word_frq.end(); ++it) {
+		cout << it->first << "=" << it->second<<endl;
+	}
+	cout << "End: Just shwoing map.." << endl;
+
+	/*ANOTHER SOLUTION - assuming input list is a string... so need to process it; eventually get to a map and later do same, i.e. get a set, etc*/
+
+	string inp = "Bob hit a ball, the hit BALL flew far after it was hit."; //just ignore arg and set here for this exercise
+
+	//traverse string until non word character - that's a word - store it with its count and then proceed to next word, etc
+	map<string, int> words_freq;
+	while (inp.length() > 0) {
+		regex regx("([[:alpha:]]+)([^[:alpha:]]*)");
+		smatch mtch;
+		regex_search(inp, mtch, regx);
+		if (mtch.size() == 3) {
+			string mtchToLower = mtch[1];
+			transform(mtchToLower.begin(), mtchToLower.end(), mtchToLower.begin(), [](unsigned char c) { return tolower(c); });
+			if (words_freq.find(mtchToLower) != words_freq.end()) {
+				words_freq[mtchToLower] += 1;
+			}   
+			else {
+				words_freq[mtchToLower] = 1;
+			}
+			inp = inp.substr(mtch[1].length() + mtch[2].length());
+		}
+		else {
+			break;
+		}
+	}
+
+	set<int> vals;
+	string banned_word = "hit";
+	vector<string> banned_list;
+	banned_list.push_back("a");
+	banned_list.push_back("hit");
+	banned_list.push_back("far");
+	//vector is not a good option to store banned words since will need to search through all every time..
+	//so let me convert to set for intsance.
+	unordered_set<string> banned;
+	banned.insert("a");
+	banned.insert("hit");
+	banned.insert("far");
+
+	/*PART 2 OF SOLUTION - COMMON TO BOTH VERSIONS IF INPUT (string vs vector of strings) */
+
+	//iterate through map and sort from highest to lowest and then show in descending order, excluding banned words.
+	for (auto iter = words_freq.begin(); iter != words_freq.end(); ++iter) {
+		cout << iter->first << "=" << iter->second << endl;
+		vals.insert(iter->second);
+	}
+	cout << "In descending order, the freuqencies of words appearance" << endl;
+	for (auto revrs_iter = vals.rbegin(); revrs_iter != vals.rend(); ++revrs_iter) {
+		cout << *revrs_iter << endl;
+		//iterate thorygh map again and shows words matching each of the values in vals.
+		for (auto iter = words_freq.begin(); iter != words_freq.end(); ++iter) { 
+			//ANSWER if banned is one word string:    UNCOMMENT: if (iter->second == *revrs_iter && iter->first != banned_word) { //string.compare is used for the string comparison
+			//ANSWER if banned is a vector turnd set: UNCOMMENT: if (iter->second == *revrs_iter && banned.find(iter->first) == banned.end()) {
+			if (iter->second == *revrs_iter) { //string.compare is used for the string comparison
+				cout << iter->first << endl;
+				//ANSWER: UNCOMMENT: return iter->first;
+			}
+		}
+	}
+
+	//cannot use find_first_of since cannot gurantee what chars will see other than words. Could use find_first_not_of but then need to list the alphabet, in lower and upper case..
+	return "abc";
+}
+
+
+//Given an array n integers, are there elements a, b, c in array such that sum of (a,b,c) equals to a particular target X?
+//Solve in O(n^2) at least ( O(n^3) should be easy )
+void threesome(/*int inp_arr[], int inp_target*/) {
+	//will just set input variables here:
+	//int arr[] = { 4, 9, 1, 3, 5, 6, 7, 2 };
+	int arr[] = { -1,0,1,2,3,-4 };
+	//int target = 5; //6 works for instance
+	int target = 0; //6 works for instance
+	vector<set<int>> foundNums;
+	//like the two sum, but here will be O(n^2) since will iterate through two..
+	unordered_set<int> num_set; // NO DUPLICATES WILL BE RECORDED FROM INPUT if use set. USE MULTISET to allow for duplicates..
+	for (auto i = 0; i < sizeof(arr) / sizeof(int); i++) {
+		num_set.insert(arr[i]);
+	}
+	for (auto i = 0; i < sizeof(arr) / sizeof(int) - 1; i++) {
+		//the j above i is to exclude number that already picked. We also dont need lower than i numbers in j since when i was 0,1,etc, it already covered the range.
+		for (auto j = i+1; j < sizeof(arr) / sizeof(int); j++) {
+			//the last two conditions are to ensure we don't pick the same number again. BUT, if same num exists multiple times in input array, need to modify below somehow.
+			if (num_set.find(target - arr[j] - arr[i]) != num_set.end() && (target - arr[j] - arr[i]) != arr[i] && (target - arr[j] - arr[i]) != arr[j]) {
+				cout << " Num 1=" << arr[j] << " Num 2=" << arr[i] << " Num 3=" << target - arr[j] - arr[i] << endl;
+				//go through foundNums vectors of sets to see if the 3 numbers already were recorded.
+				bool found = false;
+				for (auto num = foundNums.begin(); num != foundNums.end(); ++num) {
+					set<int> three = *num;
+					//iterating through the 3 numbers of each vector entry
+					if (three.find(arr[j]) != three.end() && three.find(arr[i]) != three.end() && three.find(target - arr[j] - arr[i]) != three.end()) {
+						found = true;
+						cout << "Already recorded this triplet" << " Num 1=" << arr[j] << " Num 2=" << arr[i] << " Num 3=" << target - arr[j] - arr[i] << endl;
+						break;
+					}
+				}
+				if (!found) {
+					cout <<"Recording following triplet" << " Num 1=" << arr[j] << " Num 2=" << arr[i] << " Num 3=" << target - arr[j] - arr[i] << endl;
+					set<int> threeNums;
+					threeNums.insert(arr[j]);
+					threeNums.insert(arr[i]);
+					threeNums.insert(target - arr[j] - arr[i]);
+					foundNums.push_back(threeNums);
+				}
+			}
+		}
+	}
+	cout << "Found the following triplets"<<endl;
+	for (auto i = foundNums.begin(); i != foundNums.end(); ++i) {
+		set<int> three = *i;
+		for (auto j = three.begin(); j != three.end(); ++j) {
+			cout << *j << " ";
+		}
+		cout << endl;
+	}
+	cout << "Done finding the following triplets" << endl;
+
+}
+
+
+void threeSum() {
+
+	int nums_arr[] = { -1,0,1,2,-1,-4 };
+
+	vector<int> nums (nums_arr, nums_arr + sizeof(nums_arr) / sizeof(int));
+
+	sort(nums.begin(), nums.end());
+
+	vector<vector<int>> ans;
+
+	for (int i = 0; i < nums.size(); i++)
+	{
+		if (i > 0 && nums[i] == nums[i - 1]) continue; // Now placing the 'i' pointer to next 'DIFFERENT' element
+
+		int target_2 = 0 - nums[i];
+		int left = i + 1;
+		int right = nums.size() - 1;
+
+		while (left < right)
+		{
+			int sum = nums[left] + nums[right];
+
+			if (target_2 > sum) left++;
+
+			else if (target_2 < sum) right--;
+
+			else //target_2 == sum 
+			{
+				vector<int> triplet(3);
+				triplet[0] = nums[i];
+				triplet[1] = nums[left];
+				triplet[2] = nums[right];
+
+				ans.push_back(triplet);
+
+				//Now placing the left pointer to the next different element 
+				//(BASICALLY SKIPPING ALL SAME ELEMENTS THAT COMES IN THE RANGE)
+				while (left < right && nums[left] == triplet[1]) left++;
+
+				//Now placing the right pointer to the next different element 
+				//(BASICALLY SKIPPING ALL SAME ELEMENTS THAT COMES IN THE RANGE)
+				while (left < right && nums[right] == triplet[2]) right--;
+			}
+		}
+
+	}
+
+	cout << "printing trpiplets" << endl;
+	for (auto i = ans.begin(); i != ans.end(); ++i) {
+		vector<int> insd = *i;
+		for (auto j = insd.begin(); j != insd.end(); ++j) {
+			cout << *j << " ";
+		}
+		cout << endl;
+	}
+}
+
+void twoSum() {
+
+	int nums_arr[] = { -1,0,1,2,-1,-4,0 };
+
+	vector<int> arr(nums_arr, nums_arr + sizeof(nums_arr) / sizeof(int));
+	vector<vector<int>> ans;
+
+	int k = -2; //target
+	sort(arr.begin(), arr.end());
+	int lhs = 0;
+	int rhs = arr.size() - 1;
+	bool found = false;
+	while (lhs < rhs) {
+		int sum = arr[lhs] + arr[rhs];
+		if (sum == k) {
+			cout << "found: " << arr[lhs] << " " << arr[rhs] << endl;
+			found = true;
+			break;
+		}
+		else if (sum < k) lhs++;
+		else rhs--;
+	}
+	if (!found) cout << "Did not find" << endl;
+}
+
+void twoSum_hash() {
+
+	int nums_arr[] = { -1,0,1,2,-1,-4,0 };
+
+	vector<int> arr(nums_arr, nums_arr + sizeof(nums_arr) / sizeof(int));
+	vector<vector<int>> ans;
+
+	int k = 0; //target
+	unordered_set<int> values;
+	bool found = false;
+	for (auto i = arr.begin(); i != arr.end(); ++i) {
+		if (values.find(k - *i) != values.end()) {
+			cout << "FOUDN: " << k - *i << " " << *i << endl;
+			found = true;
+			break;
+		}
+		values.insert(*i);
+	}
+	if (!found) cout << "Did not find" << endl;
 }
