@@ -917,7 +917,7 @@ int main()
 
     Graph_t g(6);
     g.addEdge(0, 1);
-    g.addEdge(0, 2);
+    g.addEdge(2, 0);
     g.addEdge(1, 2);
     g.addEdge(2, 3);
     g.addEdge(3, 3);
@@ -927,6 +927,8 @@ int main()
         cout << "The Graph is Connected" << endl;
     else
         cout << "The Graph is not Connected" << endl;
+    cout << "Following are strongly connected components in above graph \n";
+    g.printSCCs();
 
     Graph_t g1(5);
     g1.addEdge(0, 1);
@@ -940,6 +942,97 @@ int main()
     else
         cout << "The Graph is not Connected" << endl;
 
+    cout << "Following are strongly connected components in given graph \n";
+    g1.printSCCs();
+
+
+    //*****island problem - need to impekentn vertex and edge setting and thenjust call the algorithms (DFS, SCC, etc)
+    //assuming problem is presented as a matrix filled with 1's (land) and 0's (water)
+    int rows = 2;
+    int cols = 3;
+    if (rows < 1 || cols < 1) {
+        cerr << "Invalid matrix size, quitting" << endl;
+        return -1;
+    }
+    int** mtx = new int*[rows];
+    for (int i = 0; i < rows; i++) 
+        mtx[i] = new int[cols];
+    cout << "fill matrix with random 0's and 1's" << endl;
+    //uncomment below for nadomziation - and keep seed2=12345 commented
+    time_t seed2 = time(NULL);
+    //seed2 = 12345;
+    srand(seed2);
+    for (int i = 0; i < rows; i++)
+        for (int j = 0; j < cols; j++)
+            mtx[i][j] = rand() % 2; 
+
+    cout << "print resultsnt matrix that will be used as input" << endl;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++)
+            cout << " " << mtx[i][j] << " ";
+        cout << endl;
+    }
+    cout << "Now traverse matrix and add edges" << endl;
+    Graph_t island(rows * cols);
+    for (int i = 0; i < rows - 1; i++) {
+        for (int j = 0; j < cols - 1; j++) {
+            //seaerch right
+            if (mtx[i][j] == 1 && mtx[i][j + 1] == 1) {
+                island.addEdge(i * cols + j, i * cols + j + 1);
+                cout << "Adding edge from " << i * cols + j << " to " << i * cols + j + 1 << endl;
+            }
+            //and search down
+            if (mtx[i][j] == 1 && mtx[i + 1][j] == 1) {
+                island.addEdge(i * cols + j, (i+1) * cols + j);
+                cout << "Adding edge from " << i * cols + j << " to " << (i + 1) * cols + j << endl;
+            }
+        }
+    }
+    int i = rows - 1;
+    //go throuw last row
+    for (int j = 0; j < cols - 1; j++) {
+        if (mtx[i][j] == 1 && mtx[i][j + 1] == 1) {
+            island.addEdge(i * cols + j, i * cols + j + 1);
+            cout << "Adding edge from " << i * cols + j << " to " << i * cols + j + 1 << endl;
+        }
+    }
+    //go through last col
+    int j = cols - 1;
+    for (int i = 0; i < rows - 1; i++) {
+        if (mtx[i][j] == 1 && mtx[i + 1][j] == 1) {
+            island.addEdge(i * cols + j, (i + 1) * cols + j);
+            cout << "Adding edge from " << i * cols + j << " to " << (i + 1) * cols + j << endl;
+        }
+    }
+
+    cout << "Following are strongly connected components in THE ISLAND (graph is undirected)\n";
+    island.printSCCs();
+    /*
+    cout << " And now, the single itemed strongly conencted compoenents" << endl;
+    for (auto i : island.sccs) {
+        if (i.size() == 1) {
+            cout << i[0] << endl;
+        }
+    }
+    */
+    cout << "DONE" << endl;
+
+    for (auto i : island.sccs) {
+        if (i.size() == 1) {
+            //check if mtx is 1 for this and if so, it's another island; otherwise it is not.
+            //convert absolute number to row/col
+            if (mtx[i[0] / cols][i[0] % cols] == 1) {
+                //cout << "location: [" << i[0] / cols << "]" << "[" << i[0] % cols << "] is 1 !" << endl;
+                island.islands++;
+            }
+            else {
+                //cout << "location: [" << i[0] / cols << "]" << "[" << i[0] % cols << "] is 0 !" << endl;
+            }
+        }
+    }
+
+
+    cout << "We have " << island.islands << " islands !" << endl;
 
     return 0;
 }

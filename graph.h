@@ -1,6 +1,7 @@
 #pragma once
 #include <queue>
 #include <list>
+#include <stack>
 
 using namespace std;
 
@@ -271,29 +272,49 @@ private:
 	int V;
 	list<int>* adj;
 	void DFSUtil(int v, bool visited[]); //for DFS; not needed for BFS
+	//Below is for finding strongly connected components (SCC) - finding  SCC used DFS
+	// Fills Stack with vertices (in increasing order of finishing times)
+	// The top element of stack has the maximum finishing time
+	void fillOrder(int v, bool visited[], stack<int>& Stack);
 public:
 	Graph_t(int V)
 	{
 		this->V = V;
 		adj = new list<int>[V];
+		connection = V;
+		print_scc = 0;
+		islands = 0;
 	}
 	~Graph_t()
 	{
 		delete [] adj;
 	}
-	void addEdge(int v, int w);
+	void addEdge(int v, int w, bool undirected = true);
 	void BFS(int s, bool visited[]);
 	void getTranspose(Graph_t& g);
 	bool isConnected();
+
+	// The main function that finds and prints strongly connected components (SCC)
+	int printSCCs();
+
+	int connection; //me added to tell if graph is strongly connected or not
+	int print_scc;
+	int islands;
+	vector<vector<int>> sccs;
+	vector<int> scc;
 };
 
 /*
  * Add Edge to connect v and w - below is for undirected graph
  */
-void Graph_t::addEdge(int v, int w)
+//Default is undirected = true - see in module definiton in class.
+void Graph_t::addEdge(int v, int w, bool undirected)
 {
 	adj[v].push_back(w);
-	adj[w].push_back(v);
+	if (undirected) {
+		adj[w].push_back(v); //commenting for SCC work - actually not true; can have undirected graph too, then it's a lot mor elikely for graph to be strongly connected..
+	}
+	
 }
 
 /*
@@ -326,6 +347,10 @@ void Graph_t::BFS(int s, bool visited[])
 void Graph_t::DFSUtil(int v, bool visited[])
 {
 	visited[v] = true;
+	cout << v << " "; // For SCC printing
+	print_scc++;
+	scc.push_back(v);
+	// Recur for all the vertices adjacent to this vertex
 	list<int>::iterator i;
 	for (i = adj[v].begin(); i != adj[v].end(); ++i)
 		if (!visited[*i])
@@ -340,6 +365,7 @@ void Graph_t::getTranspose(Graph_t& g)
 	//Graph_t g(V);
 	for (int v = 0; v < V; v++)
 	{
+		// Recur for all the vertices adjacent to this vertex
 		list<int>::iterator i;
 		for (i = adj[v].begin(); i != adj[v].end(); ++i)
 		{
@@ -374,3 +400,70 @@ bool Graph_t::isConnected()
 	return true;
 }
 
+void Graph_t::fillOrder(int v, bool visited[], stack<int>& Stack)
+{
+	// Mark the current node as visited and print it
+	visited[v] = true;
+
+	// Recur for all the vertices adjacent to this vertex
+	list<int>::iterator i;
+	for (i = adj[v].begin(); i != adj[v].end(); ++i)
+		if (!visited[*i])
+			fillOrder(*i, visited, Stack);
+
+	// All vertices reachable from v are processed by now, push v to Stack
+	Stack.push(v);
+}
+
+// The main function that finds and prints all strongly connected components
+int Graph_t::printSCCs()
+{
+	stack<int> Stack;
+
+	// Mark all the vertices as not visited (For first DFS)
+	bool* visited = new bool[V];
+	for (int i = 0; i < V; i++)
+		visited[i] = false;
+
+	// Fill vertices in stack according to their finishing times
+	for (int i = 0; i < V; i++)
+		if (visited[i] == false)
+			fillOrder(i, visited, Stack);
+
+	// Create a reversed graph
+	Graph_t gr(V);
+	getTranspose(gr);
+
+	// Mark all the vertices as not visited (For second DFS)
+	for (int i = 0; i < V; i++)
+		visited[i] = false;
+	int count = 0;
+	// Now process all vertices in order defined by Stack
+	while (Stack.empty() == false)
+	{
+		// Pop a vertex from stack
+		int v = Stack.top();
+		Stack.pop();
+
+		// Print Strongly connected component of the popped vertex
+		if (visited[v] == false)
+		{
+			gr.DFSUtil(v, visited);
+			cout << endl;
+			connection--; //fine to update for main graph
+
+			sccs.push_back(gr.scc);
+			gr.scc.clear(); //needed since dealign with same gr every DFSUtil invocation
+
+			if (gr.print_scc > 1) islands++; //DFS is called from gr rather than the main graph 
+			gr.print_scc = 0;
+
+		}
+		count++;
+	}
+
+	if (connection == V - 1) cout << "Graph is strongly connected" << endl;
+	else cout << "Grahp IS NOT strongly connected; it has " << V - connection << " strongly complenents " << endl;
+
+	return count;
+}
