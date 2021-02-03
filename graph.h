@@ -1,5 +1,7 @@
 #pragma once
 #include <queue>
+#include <list>
+
 using namespace std;
 
 class vertex {
@@ -258,3 +260,117 @@ void dfs_printAll(graph g) {
 		}
 	}
 }
+
+
+
+
+
+class Graph_t
+{
+private:
+	int V;
+	list<int>* adj;
+	void DFSUtil(int v, bool visited[]); //for DFS; not needed for BFS
+public:
+	Graph_t(int V)
+	{
+		this->V = V;
+		adj = new list<int>[V];
+	}
+	~Graph_t()
+	{
+		delete [] adj;
+	}
+	void addEdge(int v, int w);
+	void BFS(int s, bool visited[]);
+	void getTranspose(Graph_t& g);
+	bool isConnected();
+};
+
+/*
+ * Add Edge to connect v and w - below is for undirected graph
+ */
+void Graph_t::addEdge(int v, int w)
+{
+	adj[v].push_back(w);
+	adj[w].push_back(v);
+}
+
+/*
+ *  A recursive function to print BFS starting from s
+ */
+void Graph_t::BFS(int s, bool visited[])
+{
+	list<int> q;
+	list<int>::iterator i;
+	visited[s] = true;
+	q.push_back(s);
+	while (!q.empty())
+	{
+		s = q.front();
+		q.pop_front();
+		for (i = adj[s].begin(); i != adj[s].end(); ++i)
+		{
+			if (!visited[*i])
+			{
+				visited[*i] = true;
+				q.push_back(*i);
+			}
+		}
+	}
+}
+
+/*
+ *  A recursive function to print DFS starting from v
+ */
+void Graph_t::DFSUtil(int v, bool visited[])
+{
+	visited[v] = true;
+	list<int>::iterator i;
+	for (i = adj[v].begin(); i != adj[v].end(); ++i)
+		if (!visited[*i])
+			DFSUtil(*i, visited);
+}
+
+/*
+ * Function that returns reverse (or transpose) of this graph
+ */
+void Graph_t::getTranspose(Graph_t& g)
+{
+	//Graph_t g(V);
+	for (int v = 0; v < V; v++)
+	{
+		list<int>::iterator i;
+		for (i = adj[v].begin(); i != adj[v].end(); ++i)
+		{
+			g.adj[*i].push_back(v);
+		}
+	}
+	//return g;
+}
+/*
+ * Check if Graph is Connected
+ * IF want BFS traversal, uncomments the two BFS's and comment the two DFSutils. Currently it's doing DFS.
+ */
+bool Graph_t::isConnected()
+{
+	bool* visited = new bool[V];
+	for (int i = 0; i < V; i++)
+		visited[i] = false;
+	//BFS(0, visited);
+	DFSUtil(0, visited);
+	for (int i = 0; i < V; i++)
+		if (visited[i] == false)
+			return false;
+	Graph_t gr(V);
+	getTranspose(gr);
+	for (int i = 0; i < V; i++)
+		visited[i] = false;
+	//gr.BFS(0, visited);
+	gr.DFSUtil(0, visited);
+	for (int i = 0; i < V; i++)
+		if (visited[i] == false)
+			return false;
+	return true;
+}
+

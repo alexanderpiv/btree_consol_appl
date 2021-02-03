@@ -621,3 +621,195 @@ void twoSum_hash() {
 	}
 	if (!found) cout << "Did not find" << endl;
 }
+
+
+//Design a class to find the kth largest element in a stream. Note that it is the kth largest element in the sorted order, not the kth distinct element.
+//Implement KthLargest class :
+//KthLargest(int k, int[] nums) Initializes the object with the integer kand the stream of integers nums.
+//int add(int val) Returns the element representing the kth largest element in the stream.
+/*EXAMPLE:
+Input
+["KthLargest", "add", "add", "add", "add", "add"]
+[[3, [4, 5, 8, 2]], [3], [5], [10], [9], [4]]
+Output
+[null, 4, 5, 5, 8, 8]
+
+Explanation
+KthLargest kthLargest = new KthLargest(3, [4, 5, 8, 2]);
+kthLargest.add(3);   // return 4
+kthLargest.add(5);   // return 5
+kthLargest.add(10);  // return 5
+kthLargest.add(9);   // return 8
+kthLargest.add(4);   // return 8
+*/
+
+//************************DESIGN AND QUESTION EXPLAINED
+//min_heap below is of type priority_queue. By default, less<T> is the comparison func and dictates the order of elements in this structure.
+//This means that calling pop() will remove the LARGEST element and calling top() will just show the largest element.
+//BUT, here we use larger<T> so removing the LOWEST element and always maintaining the K largest elements.
+//Now, what the QUESTION asks is to provide the Kth largest, i.e. not The Largest, but the say 3rd largest. 
+//Using min_heap of size K always keeps at top ([0]) the kth largest. The largest is in location [k] but we can only pop/top [0] and that's what we need.
+
+class KthLargest {
+	unsigned int K_;
+	/* For reference
+	template<
+	class T,
+	class Container = std::vector<T>,
+	class Compare = std::less<typename Container::value_type>
+	> class priority_queue;
+	*/
+	//Priority queues are a type of container adaptors, specifically designed such that its first element is always the greatest of the elements it contains, according to some strict weak ordering criterion.
+	std::priority_queue<int, std::vector<int>, std::greater<int>> min_heap;
+public:
+
+	/*
+		Use min heap of size K to store and sort the top K elements and return the root
+	*/
+	KthLargest(int k, vector<int>& nums) {
+		K_ = k;
+		for (auto x : nums) {
+			min_heap.push(x);
+			if (min_heap.size() > K_) { min_heap.pop(); }
+		}
+	}
+
+	int add(int val) {
+		min_heap.push(val);
+		if (min_heap.size() > K_) { min_heap.pop(); }
+		return min_heap.top();
+	}
+};
+
+//merge two sorted lists into one sorted list
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+struct ListNode {
+	int val;
+	ListNode* next;
+	ListNode() : val(0), next(nullptr) {}
+	ListNode(int x) : val(x), next(nullptr) {}
+	ListNode(int x, ListNode* next) : val(x), next(next) {}
+};
+
+//class Solution {
+//public:
+	ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+		ListNode* merged = new ListNode(); 
+		ListNode* merged_head = merged;
+		//if could modify l1 and l2, would add a sentitnel to avoid checking bounds..
+		while (l1 != nullptr || l2 != nullptr) {
+			if (l1 == nullptr && l2 != nullptr) {
+				merged->next = l2;
+				merged = merged->next;
+				l2 = l2->next;
+			}
+			else if (l1 != nullptr && l2 == nullptr) {
+				merged->next = l1;
+				merged = merged->next;
+				l1 = l1->next;
+			}
+			else {
+				if (l1->val < l2->val) {
+					merged->next = l1;
+					merged = merged->next;
+					l1 = l1->next;
+				}
+				else {
+					merged->next = l2;
+					merged = merged->next;
+					l2 = l2->next;
+				}
+			}
+		}
+		if (merged_head->next == nullptr) return nullptr;
+		else return merged_head->next;
+	}
+//};
+
+//Given an array of intervals representing N meetings, find out if a person can attend all the meetings. 
+//Input: [[6,7],[2,4],[8,12]] Output: true Explanation: None of the meetings overlap with each other. 
+//Input: [[1,4],[2,5],[7,9]] Output: false Explanation: Meetings [1,4] and [2,5] overlap with each other. 
+
+	//The time complexity is O(nlogn) and space complexity is O(n)
+//Solution is based on merge intervals idea - we merge all intervals and if there are ovelraps, the number of merged intervals will be less than the original one.
+//	class Solution {
+//	public:
+		bool canAttendMeetings(vector<vector<int>>& intervals) {
+			int i, j;
+
+			vector<vector<int>>v;
+			if (intervals.size() == 0)
+			{
+				return true;
+			}
+			sort(intervals.begin(), intervals.end()); //sortig on first column i believe if no compare funciton provided. Could provide comapre func to sort on 2nd, 3rd, etc column. or just sort first row, etc.
+			vector<int>l;
+			l.push_back(intervals[0][0]);
+			l.push_back(intervals[0][1]);
+			v.push_back(l);
+
+			for (i = 1; i < intervals.size(); i++) 
+			{
+				vector<int> prev = v.back();
+				//time to merge
+				if (intervals[i][0] < prev[1])
+				{
+					l.clear();
+					v.pop_back();
+					l.push_back(prev[0]);
+					l.push_back(max(prev[1], intervals[i][1]));
+					v.push_back(l);
+				}
+				else
+				{
+					v.push_back(intervals[i]);
+				}
+			}
+			if (intervals.size() == v.size())
+			{
+				cout << "No meeting conflicts in the meetings provided:" << endl;
+				return true;
+			}
+			return false;
+
+		}
+//	};
+
+
+
+//Given an array, find the length of the longest subarray which has no repeating numbers. 
+//Input: A = {1,2,3,3,4,5} Output: 3 Explanation: Longest subarray without any repeating elements are {1,2,3} & {3,4,5}.
+
+		int lengthOfLongestSubarray(vector<int>v)
+		{
+			if (v.size() == 0)
+			{
+				return 0;
+			}
+			map<int, int> mapy;
+			int left = 0, right = 0;
+			int max_window = -1;
+
+			for (right = 0; right < v.size(); right++)
+			{
+				int num = v[right];
+				mapy[num] = mapy[num] + 1;
+
+				while (left < right && mapy[num] > 1) {
+					mapy[v[left]] = mapy[v[left]] - 1;
+					left = left + 1;
+				}
+				//calculating max_length of window
+				max_window = max(max_window, right - left + 1);
+			}
+			return max_window;
+		}

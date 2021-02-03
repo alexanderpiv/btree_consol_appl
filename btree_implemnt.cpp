@@ -847,6 +847,100 @@ int main()
     twoSum();
     twoSum_hash();
 
+    vector<int> numsv;
+    numsv.push_back(4);
+    numsv.push_back(5);
+    numsv.push_back(8);
+    numsv.push_back(2);
+    KthLargest kInst(3, numsv); //once constructed object and pushed 4th element, 2, removed this 2 since it's the lowest and stayed at the top of the heap.
+    cout << "Adding 3 and getting: " << kInst.add(3) << endl; //returns 4 - since had 4,5,8 and adding 3 will just remove 3 and output kth largest, i.e. 4
+    cout << "Adding 3 and getting: " << kInst.add(5) << endl; //returns 5 - had 4,5,8 and adding 5 will push 4 out and remaining 5,5,8 the kth largest is 5.
+    cout << "Adding 3 and getting: " << kInst.add(10) << endl; //returns 5 - had 5,5,8 and adding 10 will push 5 out and kth largest will be 5.
+    cout << "Adding 3 and getting: " << kInst.add(9) << endl; //returns 8 - had 5,8,10 and adding 9 removes 5 and kth will be 8.
+    cout << "Adding 3 and getting: " << kInst.add(4) << endl; //returns 8 - etc.
+
+
+    ListNode* l1_1 = new ListNode(4);
+    ListNode* l1_2 = new ListNode(2, l1_1);
+    ListNode* l1_3 = new ListNode(1, l1_2);
+
+    ListNode* travrs_l1 = l1_3;
+    cout << "L1 traversal start" << endl;
+    while (travrs_l1 != nullptr) {
+        cout << travrs_l1->val << " ";
+        travrs_l1 = travrs_l1->next;
+    }
+    cout << endl<<"L1 traversal end" << endl;
+
+    ListNode* l2_1 = new ListNode(4);
+    ListNode* l2_2 = new ListNode(3, l2_1);
+    ListNode* l2_3 = new ListNode(1, l2_2);
+
+    travrs_l1 = l2_3;
+    cout << "L2 traversal start" << endl;
+    while (travrs_l1 != nullptr) {
+        cout << travrs_l1->val << " ";
+        travrs_l1 = travrs_l1->next;
+    }
+    cout << endl<<"L2 traversal end" << endl;
+
+    ListNode* merged = mergeTwoLists(l1_3, l2_3);
+
+    travrs_l1 = merged;
+    cout << "Merged traversal start" << endl;
+    while (travrs_l1 != nullptr) {
+        cout << travrs_l1->val << " ";
+        travrs_l1 = travrs_l1->next;
+    }
+    cout <<endl<< "Merged traversal end" << endl;
+
+    vector<vector<int>> intervals;
+    vector<int> int1; 
+    int1.push_back(7); 
+    int1.push_back(9); 
+    intervals.push_back(int1);
+    vector<int> int2;
+    int2.push_back(1);
+    int2.push_back(4);
+    intervals.push_back(int2);
+    vector<int> int3;
+    int3.push_back(2);
+    int3.push_back(5);
+    intervals.push_back(int3);
+
+    if (canAttendMeetings(intervals)) cout << "Can attend meetings" << endl;
+    else cout << "CAN NOT attend meetings" << endl;
+
+    vector<int>v = { 1,2,3,3,4,5 };
+    cout << "Lenght of longst subarray=" << lengthOfLongestSubarray(v) << endl;
+
+
+    Graph_t g(6);
+    g.addEdge(0, 1);
+    g.addEdge(0, 2);
+    g.addEdge(1, 2);
+    g.addEdge(2, 3);
+    g.addEdge(3, 3);
+    g.addEdge(4, 5);
+
+    if (g.isConnected())
+        cout << "The Graph is Connected" << endl;
+    else
+        cout << "The Graph is not Connected" << endl;
+
+    Graph_t g1(5);
+    g1.addEdge(0, 1);
+    g1.addEdge(1, 2);
+    g1.addEdge(2, 3);
+    g1.addEdge(3, 0);
+    g1.addEdge(2, 4);
+    g1.addEdge(4, 2);
+    if (g1.isConnected())
+        cout << "The Graph is Connected" << endl;
+    else
+        cout << "The Graph is not Connected" << endl;
+
+
     return 0;
 }
 
