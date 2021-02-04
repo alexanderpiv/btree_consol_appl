@@ -339,7 +339,7 @@ bool can_segment_string2(string s, unordered_set <string>& dictonary) {
 		string first = s.substr(0, i);
 		if (dictonary.find(first) != dictonary.end()) {
 			string second = s.substr(i);
-			if (second.empty() || dictonary.find(second) != dictonary.end() || can_segment_string(second, dictonary)) {
+			if (second.empty() || dictonary.find(second) != dictonary.end() || can_segment_string2(second, dictonary)) {
 				return true;
 			}
 		}
@@ -348,8 +348,6 @@ bool can_segment_string2(string s, unordered_set <string>& dictonary) {
 }
 
 //substr: The substring is the portion of the object that starts at character position pos and spans len characters (or until the end of the string, whichever comes first).
-
-//!!!!!!!!!!!!!!!!!!TODO1: WRITE A VERSION WHERE INPUT IS NOT FROM STRING but from a Vector of strings.!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 string most_common_word(string s) {
 
@@ -702,37 +700,37 @@ struct ListNode {
 
 //class Solution {
 //public:
-	ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
-		ListNode* merged = new ListNode(); 
-		ListNode* merged_head = merged;
-		//if could modify l1 and l2, would add a sentitnel to avoid checking bounds..
-		while (l1 != nullptr || l2 != nullptr) {
-			if (l1 == nullptr && l2 != nullptr) {
-				merged->next = l2;
-				merged = merged->next;
-				l2 = l2->next;
-			}
-			else if (l1 != nullptr && l2 == nullptr) {
+ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+	ListNode* merged = new ListNode();
+	ListNode* merged_head = merged;
+	//if could modify l1 and l2, would add a sentitnel to avoid checking bounds..
+	while (l1 != nullptr || l2 != nullptr) {
+		if (l1 == nullptr && l2 != nullptr) {
+			merged->next = l2;
+			merged = merged->next;
+			l2 = l2->next;
+		}
+		else if (l1 != nullptr && l2 == nullptr) {
+			merged->next = l1;
+			merged = merged->next;
+			l1 = l1->next;
+		}
+		else {
+			if (l1->val < l2->val) {
 				merged->next = l1;
 				merged = merged->next;
 				l1 = l1->next;
 			}
 			else {
-				if (l1->val < l2->val) {
-					merged->next = l1;
-					merged = merged->next;
-					l1 = l1->next;
-				}
-				else {
-					merged->next = l2;
-					merged = merged->next;
-					l2 = l2->next;
-				}
+				merged->next = l2;
+				merged = merged->next;
+				l2 = l2->next;
 			}
 		}
-		if (merged_head->next == nullptr) return nullptr;
-		else return merged_head->next;
 	}
+	if (merged_head->next == nullptr) return nullptr;
+	else return merged_head->next;
+}
 //};
 
 //Given an array of intervals representing N meetings, find out if a person can attend all the meetings. 
@@ -743,45 +741,45 @@ struct ListNode {
 //Solution is based on merge intervals idea - we merge all intervals and if there are ovelraps, the number of merged intervals will be less than the original one.
 //	class Solution {
 //	public:
-		bool canAttendMeetings(vector<vector<int>>& intervals) {
-			int i, j;
+bool canAttendMeetings(vector<vector<int>>& intervals) {
+	int i, j;
 
-			vector<vector<int>>v;
-			if (intervals.size() == 0)
-			{
-				return true;
-			}
-			sort(intervals.begin(), intervals.end()); //sortig on first column i believe if no compare funciton provided. Could provide comapre func to sort on 2nd, 3rd, etc column. or just sort first row, etc.
-			vector<int>l;
-			l.push_back(intervals[0][0]);
-			l.push_back(intervals[0][1]);
+	vector<vector<int>>v;
+	if (intervals.size() == 0)
+	{
+		return true;
+	}
+	sort(intervals.begin(), intervals.end()); //sortig on first column i believe if no compare funciton provided. Could provide comapre func to sort on 2nd, 3rd, etc column. or just sort first row, etc.
+	vector<int>l;
+	l.push_back(intervals[0][0]);
+	l.push_back(intervals[0][1]);
+	v.push_back(l);
+
+	for (i = 1; i < intervals.size(); i++)
+	{
+		vector<int> prev = v.back();
+		//time to merge
+		if (intervals[i][0] < prev[1])
+		{
+			l.clear();
+			v.pop_back();
+			l.push_back(prev[0]);
+			l.push_back(max(prev[1], intervals[i][1]));
 			v.push_back(l);
-
-			for (i = 1; i < intervals.size(); i++) 
-			{
-				vector<int> prev = v.back();
-				//time to merge
-				if (intervals[i][0] < prev[1])
-				{
-					l.clear();
-					v.pop_back();
-					l.push_back(prev[0]);
-					l.push_back(max(prev[1], intervals[i][1]));
-					v.push_back(l);
-				}
-				else
-				{
-					v.push_back(intervals[i]);
-				}
-			}
-			if (intervals.size() == v.size())
-			{
-				cout << "No meeting conflicts in the meetings provided:" << endl;
-				return true;
-			}
-			return false;
-
 		}
+		else
+		{
+			v.push_back(intervals[i]);
+		}
+	}
+	if (intervals.size() == v.size())
+	{
+		cout << "No meeting conflicts in the meetings provided:" << endl;
+		return true;
+	}
+	return false;
+
+}
 //	};
 
 
@@ -789,27 +787,144 @@ struct ListNode {
 //Given an array, find the length of the longest subarray which has no repeating numbers. 
 //Input: A = {1,2,3,3,4,5} Output: 3 Explanation: Longest subarray without any repeating elements are {1,2,3} & {3,4,5}.
 
-		int lengthOfLongestSubarray(vector<int>v)
-		{
-			if (v.size() == 0)
-			{
-				return 0;
-			}
-			map<int, int> mapy;
-			int left = 0, right = 0;
-			int max_window = -1;
+int lengthOfLongestSubarray(vector<int>v)
+{
+	if (v.size() == 0)
+	{
+		return 0;
+	}
+	map<int, int> mapy;
+	int left = 0, right = 0;
+	int max_window = -1;
 
-			for (right = 0; right < v.size(); right++)
-			{
-				int num = v[right];
-				mapy[num] = mapy[num] + 1;
+	for (right = 0; right < v.size(); right++)
+	{
+		int num = v[right];
+		mapy[num] = mapy[num] + 1;
 
-				while (left < right && mapy[num] > 1) {
-					mapy[v[left]] = mapy[v[left]] - 1;
-					left = left + 1;
-				}
-				//calculating max_length of window
-				max_window = max(max_window, right - left + 1);
-			}
-			return max_window;
+		while (left < right && mapy[num] > 1) {
+			mapy[v[left]] = mapy[v[left]] - 1;
+			left = left + 1;
 		}
+		//calculating max_length of window
+		max_window = max(max_window, right - left + 1);
+	}
+	return max_window;
+}
+
+
+//i'd say code it so that find top K freq words - could be one task. ANd then find which are in the keord list and output those - second task.
+//maybe not.. or maybe yes..
+//Ok, so if i take keyword=services and search in each review, that's ok but then searching same reviews for other keywords - not good.
+//So, go through each review and store the freq of each word and then match taht word to keyword. and make lowercase, etc..and sort equal freq.
+
+/*bool compare_map_vals(pair<int, string> p1, pair<int, string> p2) {
+	if (p1.first > p2.first) return true;
+	else if (p1.first == p2.first) return p1.second > p2.second;
+	else return false;
+}*/
+
+class compare_map_vals
+{
+public:
+	bool operator()(const pair<int, string>& lhs, const pair<int, string>& rhs)
+	{
+		//when returning true it means the item goes to the bottom of the queue and calling top() shows the opposite value
+		if (lhs.first < rhs.first) return true;
+		else if (lhs.first == rhs.first) {
+			//sorting alphapbetically means Higher letter at the bottom
+			if (lhs.second > rhs.second) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else return false;
+	}
+};
+
+void top_K_freq_keywords() {
+	int k = 2;
+	//practice list.. could use vector. Lists cannot access random elements diretly since need to traverse; otherwise, no issues. This is also not an issue, depedning on suage of course.
+	list<string> keywords;
+	keywords.push_back("services");
+	keywords.push_back("algorithms");
+	keywords.push_back("interview");
+
+	list<string> reviews;
+	reviews.push_back("algorithms and Me provides the best services for the interview preparations");
+	reviews.push_back("Also, their mock interview services awesome services");
+	reviews.push_back("Best services provided by Algorithms and me, everyone should use their services");
+
+	map<string, int> words_freq;
+	for (auto review : reviews) {
+		string review_st = review;
+		map<string, int> words_freq_local; //to be used to count just one iteration of repeating words
+		//cout << "Review as is=" << review_st << endl;
+		//transform(review_st.begin(), review_st.end(), review_st.begin(), [](unsigned char c) { return tolower(c); });
+		//cout << "Review lowercase=" << review_st << endl;
+		//split review into words and insert each word into words_freq - but for same review, don't increment count for multpiel appernc word
+		while (review_st.length() > 0) {
+			regex regx("([[:alpha:]]+)([^[:alpha:]]*)");
+			smatch mtch;
+			regex_search(review_st, mtch, regx);
+			if (mtch.size() == 3) {
+				string mtchToLower = mtch[1];
+				transform(mtchToLower.begin(), mtchToLower.end(), mtchToLower.begin(), [](unsigned char c) { return tolower(c); });
+				if (words_freq_local.find(mtchToLower) != words_freq_local.end()) {
+					words_freq_local[mtchToLower] += 1;
+				}
+				else {
+					words_freq_local[mtchToLower] = 1;
+				}
+				review_st = review_st.substr(mtch[1].length() + mtch[2].length());
+			}
+			else {
+				break;
+			}
+		}
+		//traverse through local map and add to global
+		for (auto i = words_freq_local.begin(); i != words_freq_local.end(); ++i) {
+			if (words_freq.find(i->first) != words_freq.end()) {
+				words_freq[i->first] += 1;
+			}
+			else {
+				words_freq[i->first] = 1;
+			}
+		}
+	}
+
+	cout << "Print resulting freq map" << endl;
+	for (auto i = words_freq.begin(); i != words_freq.end(); ++i) {
+		cout << i->first << "="<<i->second << endl;
+	}
+	cout << "Done printing resulting freq map" << endl;
+
+	//show me freq count of keywords
+	for (auto keyword : keywords) {
+		cout << "Keyword " << keyword << " appeared in all reviewes " << words_freq[keyword] << " times" << endl;
+	}
+
+	multimap<int, string> words_freq_rvrs;
+	for (auto keyword : keywords) {
+		words_freq_rvrs.insert(pair<int,string> (words_freq[keyword], keyword));
+	}
+	for (auto i = words_freq_rvrs.begin(); i != words_freq_rvrs.end(); ++i) {
+		cout << "first=" << i->first << " and second=" << i->second << endl;
+	}
+	//sort by freq in descending order and then sort alphabetically by ascending order
+	priority_queue<pair<int,string>, vector<pair<int, string>>, compare_map_vals> pq;
+	for (auto word_f : words_freq_rvrs) {
+		pq.push(word_f);
+	}
+	//display top K elements
+	int cnt = 0;
+	while (!pq.empty() && cnt < k) {
+		cout << "key val: "<<pq.top().first << " " << pq.top().second<<endl;
+		pq.pop();
+	}
+
+}
+
+
